@@ -1,0 +1,11 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql_container
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: argo_ai
+      MYSQL_USER: username
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
