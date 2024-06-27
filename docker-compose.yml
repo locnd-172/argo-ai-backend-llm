@@ -9,3 +9,9 @@ services:
       MYSQL_PASSWORD: password
     ports:
       - "3306:3306"
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
