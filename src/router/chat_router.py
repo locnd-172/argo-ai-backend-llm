@@ -29,8 +29,8 @@ def generate_chat_response_api(data: ChatModel) -> Dict[str, Any]:
     except TimeoutError as err:
         # raise HTTPException(status_code=408, detail=err)
         logger.error("[X] Exception in generate answer: %s, %s", err, traceback.format_exc())
-        return {"reponse": "Unknown error"}
+        return {"response": "Unknown error"}
     except Exception as err:
         # raise HTTPException(status_code=500, detail=err)
         logger.error("[X] Exception in generate answer: %s, %s", err, traceback.format_exc())
-        return {"reponse": "Unknown error"}
+        return {"response": "Unknown error"}
