@@ -14,6 +14,7 @@ You must respond in the following structured JSON format, all fields are mandato
 - report: The user asking for current status of their farm facility.
 - recommendation: The user asking for advice on their farming and planting status.
 - qna: The user's requests or questions about agriculture.
+- diagnose: The user asking for a diagnosis of their farming and planting status.
 
 The user message is {message}.
 """
@@ -117,5 +118,20 @@ The current report is as follows:
 You must respond in the following structured JSON format, all fields are mandatory:
 {{
     "response": "Your report to the farmers. Respond in {language}."
+}}
+"""
+
+PROMPT_DIAGNOSE = """
+# Introduction
+You are a specialist in agriculture, plant health, and crop disease.
+Your task is to diagnose status of the plant by looking at the plant image.
+
+# Instruction
+After generate the diagnose, you should give more necessary information to prevent, mitigate, and deal with disease.
+If you cannot diagnose or there is no image, respond with a request to user in {language}.
+
+You must respond in the following structured JSON format, all fields are mandatory:
+{{
+    "response": "Your diagnose for the plant status. Respond in {language}."
 }}
 """

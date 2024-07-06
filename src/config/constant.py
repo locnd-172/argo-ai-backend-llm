@@ -27,6 +27,7 @@ class IntentCFG:
     REPORT = "report"
     RECOMMENDATION = "recommendation"
     QNA = "qna"
+    DIAGNOSE = "diagnose"
 
 
 class LanguageCFG:
@@ -35,3 +36,16 @@ class LanguageCFG:
 
     ENGLISH = "English"
     VIETNAMESE = "Vietnamese"
+
+
+class FirebaseCFG:
+    FS_COLLECTION = "argo_ai_chatbot_collection"
+    FS_DOCUMENT = "argo_ai_chatbot_document"
+
+
+class ZillizCFG:
+    ZILLIZDB_USERNAME = os.environ["ZILLIZDB_USERNAME"]
+    ZILLIZDB_PASSWORD = os.environ["ZILLIZDB_PASSWORD"]
+    ZILLIZDB_HOST = os.environ["ZILLIZDB_HOST"]
+    ZILLIZDB_PORT = os.environ["ZILLIZDB_PORT"]
+    ZILLIZDB_COLLECTION_NAME_DOCUMENTS = os.environ["ZILLIZDB_COLLECTION_NAME_DOCUMENTS"]

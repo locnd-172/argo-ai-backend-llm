@@ -1,20 +1,20 @@
 import json
 
 from src.config.constant import IntentCFG, LanguageCFG
-from src.module.gemini.gemini_services import call_model_gemini
+from src.module.gemini.gemini_services import call_model_gemini, call_model_gemini_multimodal
 from src.module.gemini.prompts import (
     PROMPT_INTENT_DETECTION,
     PROMPT_GENERIC,
     PROMPT_EXTRACT_RECOMMENDATION_INFO,
     PROMPT_RECOMMENDATION,
-    PROMPT_EXTRACT_REPORT_INFO
+    PROMPT_EXTRACT_REPORT_INFO, PROMPT_DIAGNOSE
 )
 from src.module.report_intent import report_services
 from src.utils.helpers import get_current_datetime
 from src.utils.logger import logger
 
 
-def generate_chat_response(data, histories):
+async def generate_chat_response(data, file, histories):
     intent_info = get_intent_info(data) or {}
 
     logger.info("HISTORIES: %s", histories)
@@ -30,6 +30,8 @@ def generate_chat_response(data, histories):
         answer = get_generic_answer(data, language)
     elif intent == IntentCFG.REPORT:
         answer = get_report_response(data, language)
+    elif intent == IntentCFG.DIAGNOSE:
+        answer = await get_diagnose_response(data=data, file=file, language=language)
     elif intent == IntentCFG.RECOMMENDATION:
         recom_info = extract_recommendation_info(data)
         recom_resp = get_recommendation(inputs=recom_info, language=language, histories=histories)
@@ -70,10 +72,13 @@ def extract_recommendation_info(data):
 
 
 def get_recommendation(inputs, language, histories):
-    last_conv = histories[-1]
-    conv_str = f"""user: {last_conv['user']}
+    last_conv = histories[-1] if len(histories) > 1 else []
+    conv_str = ""
+    if len(last_conv) > 0:
+        conv_str = f"""user: {last_conv['user']}
 bot: {last_conv['bot']}
 """
+
     formatted_prompt = PROMPT_RECOMMENDATION.format(
         facility=inputs.get("facility", "unknown"),
         location=inputs.get("location", "Vietnam"),
@@ -106,4 +111,17 @@ def get_report_response(data, language):
         report_info=report_info
     )
     answer = report_resp.get("response")
+    return answer
+
+
+def get_response_docs_qn(data):
+    ...
+
+
+async def get_diagnose_response(data, file, language):
+    formatted_prompt = PROMPT_DIAGNOSE.format(language=language)
+    logger.info("DIAGNOSE PROMPT: %s", formatted_prompt)
+    diagnose_info_resp = await call_model_gemini_multimodal(prompt=formatted_prompt, file=file)
+    logger.info("DIAGNOSE INFO: %s", diagnose_info_resp)
+    answer = diagnose_info_resp.get("response")
     return answer
