@@ -1,7 +1,6 @@
-# AI Module for Eveture - Life event aggregator platform
-# Include recommendation system, text generation and scene search in video.
+# AI Module for SmartAgri
 
 ### Build and Test
-2 ways to run this project
-- Use Dockerfile
+
+- Use Dockerfile, or
 - Run command `uvicorn --host 0.0.0.0 --port 8000 main:app`

@@ -1,13 +1,15 @@
 import time
 from datetime import datetime
-import firebase
+
 import pandas as pd
-from collections import deque
+
+import firebase
 
 db = firebase.db
 bulk_writer = db.bulk_writer()
 batch = db.batch()
 collection = db.collection('gathering')
+doc_ref = db.collection("gathering").document()
 
 
 def create_data_item(row):
@@ -27,41 +29,18 @@ def create_data_item(row):
 
 
 def write_data_to_firestore(df):
-    facility_docs = {}
-    facility_data = {}
-    facility_exists = {}
-
     bulk_writer = db.bulk_writer()
 
     for index, row in df.iterrows():
         data_item = create_data_item(row)
         facility = row.get('facility', None)
-
-        doc_ref = facility_docs.setdefault(facility, collection.document())
-        if facility not in facility_data:
-            if facility not in facility_exists:
-                doc = doc_ref.get()
-                facility_exists[facility] = doc.exists
-            if facility_exists[facility]:
-                data = doc.to_dict()
-                facility_data[facility] = deque(data.get('data', []))
-            else:
-                facility_data[facility] = deque()
-
-        facility_data[facility].append(data_item)
-
         data = {
             'facility': facility,
             'location': {key: row.get(key, None) for key in
-                         ['district', 'latitude', 'address', 'province', 'longitude']},
-            'data': list(facility_data[facility])
+                         ['latitude', 'longitude', 'district', 'province', 'address']},
+            'data': data_item
         }
-
-        if facility_exists[facility]:
-            bulk_writer.update(doc_ref, data)
-        else:
-            bulk_writer.set(doc_ref, data)
-            facility_exists[facility] = True
+        bulk_writer.set(doc_ref, data)
 
     bulk_writer.flush()
 

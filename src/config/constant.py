@@ -49,3 +49,10 @@ class ZillizCFG:
     ZILLIZDB_HOST = os.environ["ZILLIZDB_HOST"]
     ZILLIZDB_PORT = os.environ["ZILLIZDB_PORT"]
     ZILLIZDB_COLLECTION_NAME_DOCUMENTS = os.environ["ZILLIZDB_COLLECTION_NAME_DOCUMENTS"]
+
+
+class AppMessages:
+    SENSITIVE_MSG = {
+        "english": "I can't answer sensitive content. Try another request please!",
+        "vietnamese": "Tôi không thể trả lời về nội dung nhạy cảm. Hãy thử đặt câu hỏi khác!"
+    }

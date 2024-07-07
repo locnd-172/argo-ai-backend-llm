@@ -1,0 +1,5 @@
+from src.module.chat_response.intent_handler.diagnose_intent.diagnose_services import get_diagnose_response
+from src.module.chat_response.intent_handler.docs_qa_intent.docs_services import get_docs_qa_response
+from src.module.chat_response.intent_handler.generic_intent.generic_service import get_generic_response
+from src.module.chat_response.intent_handler.recommend_intent.recommend_services import get_recommend_response
+from src.module.chat_response.intent_handler.report_intent.report_services import get_report_response
