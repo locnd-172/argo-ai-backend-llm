@@ -11,3 +11,5 @@ mysql~=0.0.3
 pandas~=2.2.1
 firebase-admin
 pymilvus==2.4.0
+python-docx==1.1.2
+pdfquery==0.4.3

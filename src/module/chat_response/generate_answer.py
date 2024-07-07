@@ -1,4 +1,4 @@
-from src.config.constant import IntentCFG, LanguageCFG, AppMessages
+from src.config.constant import AppMessages, IntentCFG, LanguageCFG
 from src.module.chat_response.intent_detection.intent_services import get_intent_info
 from src.module.chat_response.intent_handler import (get_diagnose_response,
                                                      get_docs_qa_response,
