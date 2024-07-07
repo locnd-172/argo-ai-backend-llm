@@ -5,7 +5,7 @@ Your task is categorize user's intent.
 You must respond in the following structured JSON format, all fields are mandatory:
 {{
     "reasoning": "a short analysis of the user's intent.",
-    "intent": "one of the following: generic, report, recommendation, qna. Based on thinking from 'reasoning' step",
+    "intent": "one of the following: generic, report, recommendation, qna, diagnose. Based on thinking from 'reasoning' step",
     "language": "primary language of user query, Vietnamese or English",
 }}
 
@@ -14,6 +14,7 @@ You must respond in the following structured JSON format, all fields are mandato
 - report: The user asking for current status of their farm facility.
 - recommendation: The user asking for advice on their farming and planting status.
 - qna: The user's requests or questions about agriculture.
+- diagnose: Diagnose crop's disease with given text and image from user.
 
 The user message is {message}.
 """
@@ -82,7 +83,7 @@ You must respond in the following structured JSON format, all fields are mandato
 """
 
 PROMPT_EXTRACT_REPORT_INFO = """# Introduction
-You are a information extract assistant that help retrieve exact information from user plain message.
+You are an information extract assistant that help retrieve exact information from user plain message.
 
 # Instruction
 You have to analyze the message and extract following information: facility, plant, location, metrics, period.
@@ -117,5 +118,59 @@ The current report is as follows:
 You must respond in the following structured JSON format, all fields are mandatory:
 {{
     "response": "Your report to the farmers. Respond in {language}."
+}}
+"""
+
+PROMPT_DIAGNOSE = """
+# Introduction
+You are an agriculture assistant in diagnosing diseases on input images from users.
+
+# Instruction
+Your reports should be concise, easy to understand, and include evaluative commentary on the current data.
+
+# Context 
+The plant is {plant}.
+The disease is {period}.
+The cause of the disease is/are as follows:
+{report_data}.
+
+You must respond in the following structured JSON format, all fields are mandatory:
+{{
+    "response": "Your report to the farmers. Respond in {language}."
+}}
+"""
+
+PROMPT_PREPROCESS_HTML = """
+# Introduction
+You are an NLP preprocess assistant that helps user remove html tag in html code and return content only.
+
+# Instruction
+You should remove all html tags like <div> or <a>, \\n and return content between html tags only.
+
+# Context
+The html code is {html_code}
+
+You must respond in the following structured JSON format, all fields are mandatory:
+{{
+    "response": "Your extracted content in html code."
+}}
+"""
+
+PROMPT_CATEGORY_DOCUMENT = """
+# Introduction
+You are an NLP preprocess assistant that give input document a type of category
+
+# Instruction
+You should read the input document thoroughly, return title category and the language of the document. In case there are more 
+than 2 languages, return the most frequency language in the document. 
+
+# Context
+The document is {document}
+
+You must respond in the following structured JSON format, all fields are mandatory:
+{{
+    "title": "The title of the document.",
+    "language": "The only main language of the document. The string should be lowercase only. 
+    For example: vietnamese | english | chinese."
 }}
 """
