@@ -34,5 +34,6 @@ The current report is as follows:
 You must respond in the following structured JSON format, all fields are mandatory:
 {{
     "response": "Your report to the farmers. Respond in {language}."
+    "follow_up": "List of 2 follow-up questions that the user may ask about your answer. Use first person."
 }}
 """

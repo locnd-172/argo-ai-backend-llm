@@ -11,6 +11,6 @@ def get_generic_response(data, language):
         now=get_current_datetime()
     )
     generic_response = call_model_gemini(formatted_prompt)
+    generic_response["follow_ups"] = []
     logger.info("GENERIC ANSWER: %s", generic_response)
-    generic_answer = generic_response.get("response")
-    return generic_answer
+    return generic_response

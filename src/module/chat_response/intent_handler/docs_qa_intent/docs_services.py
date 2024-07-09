@@ -1,8 +1,11 @@
-import json
-
-from src.config.constant import ZillizCFG
+from src.config.constant import ZillizCFG, RetrievalCFG
+from src.models.search_model import SearchHybridModel
+from src.module.chat_response.intent_handler.docs_qa_intent.docs_helpers import get_conversation_histories
+from src.module.chat_response.intent_handler.docs_qa_intent.docs_retrieval import call_search_vector_hybrid
 from src.module.databases.zillizdb.zilliz_client import ZillizClient
 from src.module.llm.embedding.gemini_embedding import GeminiEmbeddingModel
+from src.module.llm.gemini.gemini_services import call_model_gemini
+from src.module.llm.prompts.prompt_docs import PROMPT_DOCS_QA
 from src.utils.logger import logger
 
 
@@ -15,34 +18,6 @@ def insert_docs_to_zilliz(doc):
     except Exception as e:
         logger.error(e)
         return {"status": False}
-
-
-def retrieve_docs_zilliz(event):
-    doc_name = event.doc_name
-    doc_tags = event.doc_tags
-    doc_tags_str = ",".join(doc_tags)
-    doc_query = f"{doc_name} {doc_tags_str}"
-    doc_query = doc_query.lower().strip()
-    logger.info("SEARCH QUERY: %s", doc_query)
-
-    zilliz = ZillizClient()
-    search_results = zilliz.vector_search(
-        query=doc_query
-    )
-    search_results = search_results[0]
-    logger.info(
-        "SEARCH RESULT: %s",
-        str(json.dumps(search_results, indent=4, ensure_ascii=False)),
-    )
-
-    docs = [item.get("entity").get("doc_id") for item in search_results]
-    logger.info(
-        "RETRIEVED DOCS: %s",
-        str(json.dumps(docs, indent=4, ensure_ascii=False)),
-    )
-
-    response = {"docs": docs}
-    return response
 
 
 def document_builder(data):
@@ -70,7 +45,47 @@ def document_builder(data):
     return document
 
 
-def get_docs_qa_response(data, language):
-    answer = "qa"
-    question = data.sender_message
-    return answer
+def get_docs_qa_response(data, language, histories, standalone_query):
+    search_input = SearchHybridModel(
+        search=standalone_query,
+        index=RetrievalCFG.SEARCH_INDEX,
+        top=RetrievalCFG.SEARCH_TOP_K,
+    )
+    response_search = call_search_vector_hybrid(inputs=search_input)
+
+    context = [item["content"] for item in response_search]
+    metadata = []
+    response_docs_qa: dict = call_completion_qa(
+        message=data.sender_message,
+        language=language,
+        conversation_history=histories,
+        context=context,
+        metadata=metadata,
+    )
+    logger.info("DOCS QA ANSWER: %s", response_docs_qa)
+    return response_docs_qa
+
+
+def call_completion_qa(
+        message,
+        language,
+        conversation_history,
+        context,
+        metadata,
+):
+    context_str = format_context(context=context)
+    histories_str = get_conversation_histories(histories=conversation_history)
+    formatted_prompt = PROMPT_DOCS_QA.format(
+        message=message,
+        context=context_str,
+        language=language,
+        histories=histories_str
+    )
+    logger.info("DOCS QA PROMPT: %s", formatted_prompt)
+    docs_response = call_model_gemini(formatted_prompt)
+    return docs_response
+
+
+def format_context(context):
+    context_str = " ".join(context)
+    return context_str

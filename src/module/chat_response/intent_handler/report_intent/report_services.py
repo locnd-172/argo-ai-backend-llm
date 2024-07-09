@@ -89,5 +89,5 @@ def get_report_response(data, language):
         language=language,
         report_info=report_info
     )
-    answer = report_resp.get("response")
-    return answer
+
+    return report_resp

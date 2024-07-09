@@ -8,5 +8,4 @@ async def get_diagnose_response(data, file, language):
     logger.info("DIAGNOSE PROMPT: %s", formatted_prompt)
     diagnose_info_resp = await call_model_gemini_multimodal(prompt=formatted_prompt, file=file)
     logger.info("DIAGNOSE INFO: %s", diagnose_info_resp)
-    answer = diagnose_info_resp.get("response")
-    return answer
+    return diagnose_info_resp

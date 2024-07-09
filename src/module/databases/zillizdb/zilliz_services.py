@@ -15,15 +15,16 @@ def insert_documents_to_zilliz(documents):
         return False
 
 
-def retrieve_documents_from_zilliz(query):
+def retrieve_documents_from_zilliz(index, query, top_k):
     logger.info("SEARCH QUERY: %s", query)
 
-    zilliz = ZillizClient()
-    search_results = zilliz.vector_search(query=query)
+    zilliz = ZillizClient(collection_name=index)
+    search_results = zilliz.vector_search(query=query, limit_num=top_k)
     search_results = search_results[0]
+    extracted_search_results = [item["entity"] for item in search_results]
     logger.info(
         "SEARCH RESULT: %s",
-        str(json.dumps(search_results, indent=4, ensure_ascii=False)),
+        str(json.dumps(extracted_search_results, indent=4, ensure_ascii=False)),
     )
 
-    return search_results
+    return extracted_search_results

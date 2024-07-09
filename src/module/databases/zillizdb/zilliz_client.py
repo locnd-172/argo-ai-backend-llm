@@ -2,13 +2,17 @@ from pymilvus import MilvusClient
 
 from src.config.constant import ZillizCFG
 from src.module.llm.embedding.gemini_embedding import GeminiEmbeddingModel
+from src.utils.logger import logger
 
 
 class ZillizClient:
     def __init__(self, collection_name):
-        self.uri = f'https://{ZillizCFG.ZILLIZDB_HOST}:{ZillizCFG.ZILLIZDB_PORT}'
-        self.token = f'{ZillizCFG.ZILLIZDB_USERNAME}:{ZillizCFG.ZILLIZDB_PASSWORD}'
+        self.uri = f'https://{ZillizCFG.ZILLIZDB_HOST}'
+        self.token = ZillizCFG.ZILLIZDB_TOKEN
         self.collection_name = collection_name
+        logger.info("uri: %s", self.uri)
+        logger.info("token: %s", self.token)
+        logger.info("index: %s", self.collection_name)
         self.client = self.connect_db()
 
     def connect_db(self):
@@ -39,6 +43,6 @@ class ZillizClient:
                 "metric_type": "COSINE",
                 "params": {}
             },
-            output_fields=["event_id"],
+            output_fields=["id", "title", "content", "source"],
         )
         return results

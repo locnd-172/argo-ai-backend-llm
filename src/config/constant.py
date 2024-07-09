@@ -21,6 +21,7 @@ class GeminiAiCFG:
 class IntentCFG:
     INTENT = "intent"
     LANGUAGE = "language"
+    STANDALONE_QUERY = "standalone_query"
 
     GENERIC = "generic"
     SENSITIVE = "sensitive"
@@ -48,6 +49,7 @@ class ZillizCFG:
     ZILLIZDB_PASSWORD = os.environ["ZILLIZDB_PASSWORD"]
     ZILLIZDB_HOST = os.environ["ZILLIZDB_HOST"]
     ZILLIZDB_PORT = os.environ["ZILLIZDB_PORT"]
+    ZILLIZDB_TOKEN = os.environ["ZILLIZDB_TOKEN"]
     ZILLIZDB_COLLECTION_NAME_DOCUMENTS = os.environ["ZILLIZDB_COLLECTION_NAME_DOCUMENTS"]
 
 
@@ -56,3 +58,8 @@ class AppMessages:
         "english": "I can't answer sensitive content. Try another request please!",
         "vietnamese": "Tôi không thể trả lời về nội dung nhạy cảm. Hãy thử đặt câu hỏi khác!"
     }
+
+
+class RetrievalCFG:
+    SEARCH_INDEX = os.environ["SEARCH_INDEX"]
+    SEARCH_TOP_K = os.environ["SEARCH_TOP_K"]
