@@ -1,6 +1,7 @@
 import json
 
 from src.config.constant import AppMessages, IntentCFG, LanguageCFG
+from src.models.chat_model import GenerationRequest
 from src.module.chat_response.intent_detection.intent_services import get_intent_info
 from src.module.chat_response.intent_handler import (
     get_diagnose_response,
@@ -21,42 +22,37 @@ async def generate_chat_response(data, file, histories):
     language = intent_info.get(IntentCFG.LANGUAGE, LanguageCFG.EN)
     standalone_query = intent_info.get(IntentCFG.STANDALONE_QUERY, data.sender_message)
 
-    answer = "No answer"
-    follow_ups = []
-    chat_response = {"response": answer, "follow_ups": follow_ups}
+    chat_request = GenerationRequest(
+        data=data,
+        file=file,
+        histories=histories,
+        language=language,
+        standalone_query=standalone_query
+    )
+    chat_response = {"response": "No answer", "follow_ups": []}
 
-    if intent == IntentCFG.SENSITIVE:
-        chat_response = get_sensitive_response(language=language)
-    elif intent == IntentCFG.REPORT:
-        chat_response = get_report_response(data=data, language=language)
-    elif intent == IntentCFG.GENERIC:
-        chat_response = get_generic_response(data=data, language=language)
-    elif intent == IntentCFG.DIAGNOSE:
-        chat_response = await get_diagnose_response(
-            data=data,
-            language=language,
-            file=file
-        )
-    elif intent == IntentCFG.RECOMMENDATION:
-        chat_response = get_recommend_response(
-            data=data,
-            language=language,
-            standalone_query=standalone_query,
-            histories=histories,
-        )
-    elif intent == IntentCFG.QNA:
-        chat_response = get_docs_qa_response(
-            data=data,
-            language=language,
-            standalone_query=standalone_query,
-            histories=histories,
-        )
+    response_func_map = {
+        IntentCFG.QNA: get_docs_qa_response,
+        IntentCFG.REPORT: get_report_response,
+        IntentCFG.GENERIC: get_generic_response,
+        IntentCFG.DIAGNOSE: get_diagnose_response,
+        IntentCFG.SENSITIVE: get_sensitive_response,
+        IntentCFG.RECOMMENDATION: get_recommend_response,
+    }
+
+    if intent in response_func_map:
+        response_func = response_func_map[intent]
+        if intent == IntentCFG.DIAGNOSE:
+            chat_response = await response_func(chat_request)
+        else:
+            chat_response = response_func(chat_request)
 
     logger.info("CHAT RESPONSE: %s", json.dumps(chat_response, indent=4, ensure_ascii=False))
     return chat_response
 
 
-def get_sensitive_response(language):
+def get_sensitive_response(chat_request):
+    language = chat_request.language
     language = language.lower() or "vietnam"
     message_by_language = AppMessages.SENSITIVE_MSG.get(language)
     return {"response": message_by_language, "follow_ups": []}

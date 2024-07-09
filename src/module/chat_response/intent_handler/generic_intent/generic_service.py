@@ -4,10 +4,11 @@ from src.utils.helpers import get_current_datetime
 from src.utils.logger import logger
 
 
-def get_generic_response(data, language):
+def get_generic_response(chat_request):
+    data = chat_request.data
     formatted_prompt = PROMPT_GENERIC.format(
         message=data.sender_message,
-        language=language,
+        language=chat_request.language,
         now=get_current_datetime()
     )
     generic_response = call_model_gemini(formatted_prompt)

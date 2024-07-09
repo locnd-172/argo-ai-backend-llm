@@ -81,12 +81,12 @@ def extract_report_info(data):
     return report_info_resp
 
 
-def get_report_response(data, language):
-    report_info = extract_report_info(data)
+def get_report_response(chat_request):
+    report_info = extract_report_info(data=chat_request.data)
     report_data = query_report_data(report_info)
     report_resp = gen_report_answer(
         report_data=report_data,
-        language=language,
+        language=chat_request.language,
         report_info=report_info
     )
 

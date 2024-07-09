@@ -31,7 +31,12 @@ def get_recommendation(inputs, language, histories):
     return recommendation_resp
 
 
-def get_recommend_response(data, language, standalone_query, histories):
-    recom_info = extract_recommendation_info(data, standalone_query)
-    recom_resp = get_recommendation(inputs=recom_info, language=language, histories=histories)
+def get_recommend_response(chat_request):
+    data = chat_request.data
+    recom_info = extract_recommendation_info(data, chat_request.standalone_query)
+    recom_resp = get_recommendation(
+        inputs=recom_info,
+        language=chat_request.language,
+        histories=chat_request.histories
+    )
     return recom_resp

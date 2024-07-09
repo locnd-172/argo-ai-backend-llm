@@ -45,9 +45,10 @@ def document_builder(data):
     return document
 
 
-def get_docs_qa_response(data, language, histories, standalone_query):
+def get_docs_qa_response(chat_request):
+    data = chat_request.data
     search_input = SearchHybridModel(
-        search=standalone_query,
+        search=chat_request.standalone_query,
         index=RetrievalCFG.SEARCH_INDEX,
         top=RetrievalCFG.SEARCH_TOP_K,
     )
@@ -57,8 +58,8 @@ def get_docs_qa_response(data, language, histories, standalone_query):
     metadata = []
     response_docs_qa: dict = call_completion_qa(
         message=data.sender_message,
-        language=language,
-        conversation_history=histories,
+        language=chat_request.language,
+        conversation_history=chat_request.histories,
         context=context,
         metadata=metadata,
     )
