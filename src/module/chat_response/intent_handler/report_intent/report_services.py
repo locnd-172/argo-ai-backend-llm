@@ -5,13 +5,15 @@ from mysql.connector import Error
 
 from src.config.constant import MySQLCFG
 from src.module.llm.gemini.gemini_services import call_model_gemini
-from src.module.llm.prompts.prompt_report import (PROMPT_EXTRACT_REPORT_INFO,
-                                                  PROMPT_REPORT)
+from src.module.llm.prompts.prompt_report import (
+    PROMPT_EXTRACT_REPORT_INFO,
+    PROMPT_REPORT
+)
 from src.utils.helpers import get_current_date
 from src.utils.logger import logger
 
 
-def connect_and_query(query):
+async def connect_and_query(query):
     try:
         connection = mysql.connector.connect(
             host=MySQLCFG.MYSQL_HOST,
@@ -34,7 +36,7 @@ def connect_and_query(query):
         print("Error while connecting to MySQL", e)
 
 
-def query_report_data(inputs):
+async def query_report_data(inputs):
     current_date = str(get_current_date())
     # date = current_date
     logger.info("CURRENT DATE: %s", current_date)
@@ -56,11 +58,11 @@ def query_report_data(inputs):
     metrics_str = ",".join(metrics)
     query = f'SELECT {metrics_str} FROM gathering WHERE datetime = "{date}";'
     logger.info("REPORT QUERY: %s", query)
-    res = connect_and_query(query)
+    res = await connect_and_query(query)
     return res
 
 
-def gen_report_answer(report_data, language, report_info):
+async def gen_report_answer(report_data, language, report_info):
     formatted_prompt = PROMPT_REPORT.format(
         report_data=report_data,
         language=language,
@@ -69,22 +71,22 @@ def gen_report_answer(report_data, language, report_info):
         period=report_info["period"]
     )
     logger.info("PROMPT REPORT: %s", formatted_prompt)
-    report_info_resp = call_model_gemini(formatted_prompt)
+    report_info_resp = await call_model_gemini(formatted_prompt)
     logger.info("REPORT INFO: %s", report_info_resp)
     return report_info_resp
 
 
-def extract_report_info(data):
+async def extract_report_info(data):
     formatted_prompt = PROMPT_EXTRACT_REPORT_INFO.format(message=data.sender_message)
-    report_info_resp = call_model_gemini(formatted_prompt)
+    report_info_resp = await call_model_gemini(formatted_prompt)
     logger.info("REPORT INFO: %s", report_info_resp)
     return report_info_resp
 
 
-def get_report_response(chat_request):
-    report_info = extract_report_info(data=chat_request.data)
-    report_data = query_report_data(report_info)
-    report_resp = gen_report_answer(
+async def get_report_response(chat_request):
+    report_info = await extract_report_info(data=chat_request.data)
+    report_data = await query_report_data(report_info)
+    report_resp = await gen_report_answer(
         report_data=report_data,
         language=chat_request.language,
         report_info=report_info

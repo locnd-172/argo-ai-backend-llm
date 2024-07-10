@@ -4,16 +4,18 @@ from src.module.llm.prompts.prompt_recommend import PROMPT_EXTRACT_RECOMMEND_INF
 from src.utils.logger import logger
 
 
-def extract_recommendation_info(data, standalone_query):
+async def extract_recommendation_info(data, standalone_query):
     message = standalone_query if standalone_query else data.sender_message
     formatted_prompt = PROMPT_EXTRACT_RECOMMEND_INFO.format(message=message)
     logger.info("PROMPT EXTRACT RECOMMEND INFO: {}".format(formatted_prompt))
-    recommendation_info_resp = call_model_gemini(formatted_prompt)
+
+    recommendation_info_resp = await call_model_gemini(formatted_prompt)
     logger.info("RECOMMENDATION INFO: %s", recommendation_info_resp)
+
     return recommendation_info_resp
 
 
-def get_recommendation(inputs, language, histories):
+async def get_recommendation(inputs, language, histories):
     conv_str = get_conversation_histories(histories)
     formatted_prompt = PROMPT_RECOMMEND.format(
         facility=inputs.get("facility", "unknown"),
@@ -26,15 +28,17 @@ def get_recommendation(inputs, language, histories):
         history=conv_str
     )
     logger.info("RECOMMENDATION PROMPT:\n%s", formatted_prompt)
-    recommendation_resp = call_model_gemini(formatted_prompt)
+
+    recommendation_resp = await call_model_gemini(formatted_prompt)
     logger.info("RECOMMENDATION RESPONSE: %s", recommendation_resp)
+
     return recommendation_resp
 
 
-def get_recommend_response(chat_request):
+async def get_recommend_response(chat_request):
     data = chat_request.data
-    recom_info = extract_recommendation_info(data, chat_request.standalone_query)
-    recom_resp = get_recommendation(
+    recom_info = await extract_recommendation_info(data, chat_request.standalone_query)
+    recom_resp = await get_recommendation(
         inputs=recom_info,
         language=chat_request.language,
         histories=chat_request.histories

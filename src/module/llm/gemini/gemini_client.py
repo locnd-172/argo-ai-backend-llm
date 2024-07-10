@@ -3,6 +3,13 @@ import json
 import google.generativeai as genai
 
 
+def post_process_json_string(text: str):
+    text = text.replace("```json", "")
+    text = text.replace("```", "")
+    text = text.strip()
+    return text
+
+
 class GeminiAI:
 
     def __init__(self, api_key, api_model):
@@ -12,26 +19,20 @@ class GeminiAI:
             generation_config={"response_mime_type": "application/json"}
         )
 
-    def generate_content(self, prompt: str):
-        response = self.model.generate_content(prompt)
+    async def generate_content(self, prompt: str):
+        response = await self.model.generate_content_async(prompt)
         return response
 
-    def generate_content_multimodal(self, prompt: str, image):
-        response = self.model.generate_content([prompt, image])
+    async def generate_content_multimodal(self, prompt: str, image):
+        response = await self.model.generate_content_async([prompt, image])
         return response
 
-    def generate_content_json(self, prompt: str, img=None):
+    async def generate_content_json(self, prompt: str, img=None):
         if img is not None:
-            response = self.generate_content_multimodal(prompt=prompt, image=img)
+            response = await self.generate_content_multimodal(prompt=prompt, image=img)
         else:
-            response = self.generate_content(prompt=prompt)
+            response = await self.generate_content(prompt=prompt)
 
-        response_text = self.post_process_json_string(response.text)
+        response_text = post_process_json_string(response.text)
         response_json = json.loads(response_text, strict=False)
         return response_json
-
-    def post_process_json_string(self, text: str):
-        text = text.replace("```json", "")
-        text = text.replace("```", "")
-        text = text.strip()
-        return text

@@ -16,7 +16,7 @@ from src.utils.logger import logger
 async def generate_chat_response(data, file, histories):
     logger.info("HISTORIES: %s", histories)
 
-    intent_info = get_intent_info(data, histories) or {}
+    intent_info = await get_intent_info(data, histories) or {}
 
     intent = intent_info.get(IntentCFG.INTENT, IntentCFG.GENERIC)
     language = intent_info.get(IntentCFG.LANGUAGE, LanguageCFG.EN)
@@ -29,7 +29,7 @@ async def generate_chat_response(data, file, histories):
         language=language,
         standalone_query=standalone_query
     )
-    chat_response = {"response": "No answer", "follow_ups": []}
+    chat_response = {"response": "No answer", "follow_up": []}
 
     response_func_map = {
         IntentCFG.QNA: get_docs_qa_response,
@@ -42,17 +42,14 @@ async def generate_chat_response(data, file, histories):
 
     if intent in response_func_map:
         response_func = response_func_map[intent]
-        if intent == IntentCFG.DIAGNOSE:
-            chat_response = await response_func(chat_request)
-        else:
-            chat_response = response_func(chat_request)
+        chat_response = await response_func(chat_request)
 
     logger.info("CHAT RESPONSE: %s", json.dumps(chat_response, indent=4, ensure_ascii=False))
     return chat_response
 
 
-def get_sensitive_response(chat_request):
+async def get_sensitive_response(chat_request):
     language = chat_request.language
     language = language.lower() or "vietnam"
     message_by_language = AppMessages.SENSITIVE_MSG.get(language)
-    return {"response": message_by_language, "follow_ups": []}
+    return {"response": message_by_language, "follow_up": []}

@@ -45,7 +45,7 @@ def document_builder(data):
     return document
 
 
-def get_docs_qa_response(chat_request):
+async def get_docs_qa_response(chat_request):
     data = chat_request.data
     search_input = SearchHybridModel(
         search=chat_request.standalone_query,
@@ -56,7 +56,7 @@ def get_docs_qa_response(chat_request):
 
     context = [item["content"] for item in response_search]
     metadata = []
-    response_docs_qa: dict = call_completion_qa(
+    response_docs_qa: dict = await call_completion_qa(
         message=data.sender_message,
         language=chat_request.language,
         conversation_history=chat_request.histories,
@@ -67,7 +67,7 @@ def get_docs_qa_response(chat_request):
     return response_docs_qa
 
 
-def call_completion_qa(
+async def call_completion_qa(
         message,
         language,
         conversation_history,
@@ -83,7 +83,7 @@ def call_completion_qa(
         histories=histories_str
     )
     logger.info("DOCS QA PROMPT: %s", formatted_prompt)
-    docs_response = call_model_gemini(formatted_prompt)
+    docs_response = await call_model_gemini(formatted_prompt)
     return docs_response
 
 

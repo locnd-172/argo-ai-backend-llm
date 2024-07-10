@@ -5,13 +5,13 @@ from src.module.llm.gemini.gemini_client import GeminiAI
 
 
 @retry(stop=(stop_after_delay(30) | stop_after_attempt(3)), wait=wait_fixed(1))
-def call_model_gemini(prompt):
+async def call_model_gemini(prompt):
     try:
         gemini_client = GeminiAI(
             api_key=GeminiAiCFG.API_KEY,
             api_model=GeminiAiCFG.API_MODEL
         )
-        generated_content = gemini_client.generate_content_json(prompt)
+        generated_content = await gemini_client.generate_content_json(prompt)
         return generated_content
     except Exception as e:
         raise e
@@ -32,7 +32,7 @@ async def call_model_gemini_multimodal(prompt, file):
             api_key=GeminiAiCFG.API_KEY,
             api_model=GeminiAiCFG.API_MODEL
         )
-        generated_content = gemini_client.generate_content_json(prompt=prompt, img=image_data)
+        generated_content = await gemini_client.generate_content_json(prompt=prompt, img=image_data)
         return generated_content
     except Exception as e:
         raise e
