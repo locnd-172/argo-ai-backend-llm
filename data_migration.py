@@ -11,20 +11,23 @@ batch = db.batch()
 collection = db.collection('gathering')
 doc_ref = db.collection("gathering").document()
 
+location_data = ['latitude', 'longitude', 'district', 'province', 'address']
+weather_data = ['humidity', 'rainfall', 'atmospheric_pressure',
+                'max_temperature', 'cloud', 'wind_direction',
+                'min_temperature', 'wind']
+pest_data = ['pest_population_counts', 'disease_incidence', 'severity_of_infestations']
+soil_data = ['soil_nutrient_levels', 'soil_moisture', 'soil_temperature', 'soil_ph']
+irrigation_data = ['water_discharged', 'water_quality', 'water_consumed', 'water_withdrawn', 'water_recycled']
+
 
 def create_data_item(row):
     return {
         'date': datetime.combine(row['datetime'], datetime.min.time()),
-        'weather': {key: row.get(key, None) for key in
-                    ['humidity', 'rainfall', 'atmospheric_pressure', 'max_temperature', 'cloud', 'wind_direction',
-                     'min_temperature', 'wind']},
-        'pest': {key: row.get(key, None) for key in
-                 ['pest_population_counts', 'disease_incidence', 'severity_of_infestations']},
-        'irrigation': {key: row.get(key, None) for key in
-                       ['water_discharged', 'water_quality', 'water_consumed', 'water_withdrawn', 'water_recycled']},
         'fertilize': row.get('fertilize', None),
-        'soil': {key: row.get(key, None) for key in
-                 ['soil_nutrient_levels', 'soil_moisture', 'soil_temperature', 'soil_ph']},
+        'weather': {key: row.get(key, None) for key in weather_data},
+        'pest': {key: row.get(key, None) for key in pest_data},
+        'irrigation': {key: row.get(key, None) for key in irrigation_data},
+        'soil': {key: row.get(key, None) for key in soil_data},
     }
 
 
@@ -36,8 +39,7 @@ def write_data_to_firestore(df):
         facility = row.get('facility', None)
         data = {
             'facility': facility,
-            'location': {key: row.get(key, None) for key in
-                         ['latitude', 'longitude', 'district', 'province', 'address']},
+            'location': {key: row.get(key, None) for key in location_data},
             'data': data_item
         }
         bulk_writer.set(doc_ref, data)

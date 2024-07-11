@@ -1,0 +1,38 @@
+{
+  "datetime": "April 12, 2024 at 7:00:00AM UTC+7",
+  "field_id": "uuid4",
+  "fertilize": null,
+  "irrigation": {
+    "water_consumed": 511.51,
+    "water_discharged": null,
+    "water_quality": 0.52,
+    "water_recycled": 278.04,
+    "water_withdrawn": null
+  },
+  "pest": {
+    "disease_incidence": 6.54,
+    "pest_population_counts": 50,
+    "severity_of_infestations": 1.18
+  },
+  "soil": {
+    "soil_moisture": 43.6,
+    "soil_nutrient_levels": null,
+    "soil_ph": null,
+    "soil_temperature": 18.6
+  },
+  "weather": {
+    "atmospheric_pressure": 991.66,
+    "cloud": 53.61,
+    "humidity": 53.94,
+    "max_temperature": 28.01,
+    "min_temperature": 11.26,
+    "rainfall": null,
+    "wind": 9.83,
+    "wind_direction": "N"
+  },
+  "emission": {
+    "co2": 1,
+    "ch4": 1,
+    "n2o": 1
+  }
+}

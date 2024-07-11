@@ -1,0 +1,14 @@
+{
+  "_id": "equipment_001",
+  "farm_id": "farm_001",
+  "name": "Tractor",
+  "type": "John Deere",
+  "purchaseDate": "2020-01-01",
+  "maintenanceRecords": [
+    {
+      "date": "2024-06-01",
+      "type": "Oil Change",
+      "details": "Changed engine oil"
+    }
+  ]
+}

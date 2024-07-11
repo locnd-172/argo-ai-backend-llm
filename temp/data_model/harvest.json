@@ -1,0 +1,9 @@
+{
+  "_id": "harvest_001",
+  "field_id": "field_001",
+  "date": "2024-10-01",
+  "crop": "Wheat",
+  "yield": 2000,
+  "quality": "Grade A",
+  "method": "Machine"
+}

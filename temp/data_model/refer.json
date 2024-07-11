@@ -1,0 +1,41 @@
+{
+  "farm_data": {
+    "cultivation_area": 1,
+    "rice_variety": "IR64",
+    "seed_amount": 120,
+    "fertilizers": {
+      "urea": 200,
+      "superphosphate": 100,
+      "potassium_chloride": 50,
+      "composted_manure": 10000
+    },
+    "pesticides": {
+      "insecticide": 2,
+      "fungicide": 1
+    },
+    "yield": 5,
+    "cultivation_method": "Transplanting",
+    "irrigation_source": "River",
+    "irrigation_amount": 1500,
+    "soil_preparation": "Conventional tillage",
+    "straw_burned": 1
+  },
+  "energy_data": {
+    "fuel_type": "Diesel",
+    "fuel_consumption": {
+      "tillage": 20,
+      "irrigation": 10,
+      "harvesting": 5
+    },
+    "electricity_source": "National grid",
+    "electricity_consumption": 50
+  },
+  "other_factors": {
+    "soil_type": "Alluvial",
+    "groundwater_depth": 5,
+    "climate": {
+      "average_temperature": 28,
+      "average_rainfall": 1800
+    }
+  }
+}
