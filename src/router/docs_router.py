@@ -9,13 +9,11 @@ router = APIRouter(prefix="/api/v1/docs", tags=["docs"])
 
 
 @router.post(path="/link", description="Upload html using link")
-def upload_docs_link_api(document_link: str):
+async def upload_docs_link_api(document_link: str):
     logger.info("------------------ API - Upload link")
     logger.info(f"MESSAGE: %s", document_link)
     try:
-        tmp = call_docs_handler(document_link=document_link)
-
-        response = ""
+        response = await call_docs_handler(document_link=document_link)
         return response
     except TimeoutError as err:
         # raise HTTPException(status_code=408, detail=err)
@@ -28,13 +26,11 @@ def upload_docs_link_api(document_link: str):
 
 
 @router.post(path="/file", description="Upload document using file")
-def upload_docs_file_api(document_file: UploadFile = File(..., description="File should be docx or pdf")):
+async def upload_docs_file_api(document_file: UploadFile = File(..., description="File should be docx or pdf")):
     logger.info("------------------ API - Upload file")
     logger.info(f"MESSAGE: %s", document_file.filename)
     try:
-        tmp = call_docs_handler(document_file=document_file)
-
-        response = ""
+        response = await call_docs_handler(document_file=document_file)
         return response
     except TimeoutError as err:
         # raise HTTPException(status_code=408, detail=err)

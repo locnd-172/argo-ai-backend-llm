@@ -10,7 +10,8 @@ from pdfquery import PDFQuery
 from src.module.llm.gemini.gemini_services import call_model_gemini
 from src.module.llm.prompts.prompt_docs_process import PROMPT_CATEGORY_DOCUMENT, PROMPT_PREPROCESS_HTML
 from src.utils.logger import logger
-
+from src.module.llm.embedding.gemini_embedding import GeminiEmbeddingModel
+from src.module.databases.zillizdb.zilliz_services import insert_documents_to_zilliz
 
 class DocsHandler:
     def __init__(self, document_file=None, document_link=None):
@@ -18,8 +19,9 @@ class DocsHandler:
         self.document_file = document_file
         self.document_link = document_link
         self.source = ""
+        self.embedding_model = GeminiEmbeddingModel()
 
-    def handle_document(self):
+    async def handle_document(self):
         document = None
         if self.document_file is not None:
             if self.document_file.filename.endswith('.pdf'):
@@ -39,18 +41,21 @@ class DocsHandler:
         if document is None:
             return None
         else:
-            title, language = self.get_document_category(document)
+            title, language = await self.get_document_category(document)
             chunked_document = self.chunk_document(document)
             document_table = []
             for chunk in chunked_document:
                 text = chunk
                 id = str(uuid.uuid4())
+                embedding = self.embedding_model.get_embedding(text = text, task_type="RETRIEVAL_DOCUMENT")
                 document_table.append({'id': id,
                                        'title': title,
                                        'language': language,
                                        'source': self.source,
-                                       'text': text})
+                                       'text': text,
+                                       'vector': embedding['embedding']})
             document_df = pd.DataFrame(document_table)
+            insert_documents_to_zilliz(document_table)
             return document_df
             # print("CATEGORY: ", title, language)
 
@@ -86,8 +91,16 @@ class DocsHandler:
 
     def read_link(self):
         soup = self.pull_url()
-        formatted_prompt = PROMPT_PREPROCESS_HTML.format(html_code=soup.prettify())
-        paragraph = call_model_gemini(formatted_prompt)['response']
+
+        for script in soup(["script", "style"]):
+            script.extract()
+
+        text = soup.get_text()
+
+        lines = (line.strip() for line in text.splitlines())
+        chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
+        paragraph = '\n'.join(chunk for chunk in chunks if chunk)
+
         return paragraph
 
     def chunk_document(self, document):
@@ -101,9 +114,9 @@ class DocsHandler:
 
         return chunked_documents
 
-    def get_document_category(self, document):
+    async def get_document_category(self, document):
         formatted_prompt = PROMPT_CATEGORY_DOCUMENT.format(document=document)
-        response = call_model_gemini(formatted_prompt)
+        response = await call_model_gemini(formatted_prompt)
         title = response['title']
         # category = response['category']
         language = response['language']
