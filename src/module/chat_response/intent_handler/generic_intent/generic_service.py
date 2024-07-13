@@ -11,7 +11,7 @@ async def get_generic_response(chat_request):
         language=chat_request.language,
         now=get_current_datetime()
     )
-    generic_response = await call_model_gemini(formatted_prompt)
-    generic_response["follow_up"] = []
+    generic_response = await call_model_gemini(formatted_prompt, stream=True)
+    # generic_response["follow_up"] = []
     logger.info("GENERIC ANSWER: %s", generic_response)
     return generic_response

@@ -83,7 +83,7 @@ async def call_completion_qa(
         histories=histories_str
     )
     logger.info("DOCS QA PROMPT: %s", formatted_prompt)
-    docs_response = await call_model_gemini(formatted_prompt)
+    docs_response = await call_model_gemini(formatted_prompt, stream=False)
     return docs_response
 
 

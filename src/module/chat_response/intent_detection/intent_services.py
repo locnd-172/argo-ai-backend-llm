@@ -10,7 +10,8 @@ async def get_intent_info(data, histories):
     conv_str = get_conversation_histories(histories)
     formatted_prompt = PROMPT_INTENT_DETECTION.format(message=data.sender_message, histories=conv_str)
 
-    intent_info_resp = await call_model_gemini(formatted_prompt)
-    logger.info("INTENT INFO: %s", json.dumps(intent_info_resp, indent=4, ensure_ascii=False))
+    intent_info_resp = await call_model_gemini(formatted_prompt, stream=False)
+    logger.info("INTENT INFO: %s", intent_info_resp)
+    # logger.info("INTENT INFO: %s", json.dumps(intent_info_resp, indent=4, ensure_ascii=False))
 
     return intent_info_resp

@@ -32,7 +32,7 @@ async def generate_chat_response(data, file, histories):
     chat_response = {"response": "No answer", "follow_up": []}
 
     response_func_map = {
-        IntentCFG.QNA: get_docs_qa_response,
+        IntentCFG.QNA: get_generic_response,
         IntentCFG.REPORT: get_report_response,
         IntentCFG.GENERIC: get_generic_response,
         IntentCFG.DIAGNOSE: get_diagnose_response,
@@ -44,7 +44,7 @@ async def generate_chat_response(data, file, histories):
         response_func = response_func_map[intent]
         chat_response = await response_func(chat_request)
 
-    logger.info("CHAT RESPONSE: %s", json.dumps(chat_response, indent=4, ensure_ascii=False))
+    logger.info("CHAT RESPONSE: %s", chat_response)
     return chat_response
 
 

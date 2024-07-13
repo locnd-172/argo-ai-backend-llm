@@ -8,6 +8,7 @@ async def get_diagnose_response(chat_request):
     logger.info("DIAGNOSE PROMPT: %s", formatted_prompt)
     diagnose_info_resp = await call_model_gemini_multimodal(
         prompt=formatted_prompt,
+        stream=False,
         file=chat_request.file
     )
     logger.info("DIAGNOSE INFO: %s", diagnose_info_resp)
