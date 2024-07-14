@@ -29,6 +29,35 @@ class ZillizClient:
     def insert_records(self, records):
         self.client.insert(self.collection_name, records)
 
+    def get_all_records(self):
+        return self.client.query(
+            collection_name=self.collection_name,
+            filter="",
+            limit=100,
+            output_fields=["id", "title", "language", "source"]
+        )
+
+    def get_all_documents(self, batch_size=200):
+        all_documents = []
+        offset = 0
+        while True:
+            try:
+                documents = self.client.query(
+                    collection_name=self.collection_name,
+                    filter="",
+                    limit=batch_size,
+                    offset=offset,
+                    output_fields=["id", "title", "language", "source"]
+                )
+                if not documents:
+                    break
+                all_documents.extend(documents)
+                offset += batch_size
+            except Exception as e:
+                logger.error("Error retrieving all documents: %s", str(e))
+                break
+        return all_documents
+
     def vector_search(self, query, limit_num=16):
         embedding = GeminiEmbeddingModel()
         query_emb = embedding.get_embedding(query, task_type="retrieval_query")

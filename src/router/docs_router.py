@@ -3,7 +3,7 @@ import traceback
 from fastapi import APIRouter, UploadFile, File
 
 from src.models.docs_model import UploadLinkModel, UploadTextModel
-from src.module.docs.docs_service import call_docs_handler
+from src.module.docs.docs_service import call_docs_handler, call_get_docs
 from src.utils.logger import logger
 
 router = APIRouter(prefix="/api/v1/docs", tags=["docs"])
@@ -42,4 +42,15 @@ async def upload_docs_text_api(document: UploadTextModel):
         return response
     except Exception as err:
         logger.error("[X] Exception in uploading docs: %s, %s", err, traceback.format_exc())
+        return {"response": "Unknown error"}
+
+
+@router.get(path="/getAllDocuments", description="Get all document from knowledgebase")
+async def get_all_docs_api(collection: str):
+    logger.info("------------------ API - Get all documents")
+    try:
+        response = await call_get_docs(collection)
+        return response
+    except Exception as err:
+        logger.error("[X] Exception in get all docs: %s, %s", err, traceback.format_exc())
         return {"response": "Unknown error"}

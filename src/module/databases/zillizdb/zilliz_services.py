@@ -31,3 +31,9 @@ def retrieve_documents_from_zilliz(index, query, top_k):
     )
 
     return extracted_search_results
+
+
+def retrieve_all_documents_from_zilliz(index):
+    zilliz = ZillizClient(collection_name=index)
+    search_results = zilliz.get_all_documents()
+    return search_results
