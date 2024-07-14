@@ -53,15 +53,11 @@ async def get_docs_qa_response(chat_request):
         top=RetrievalCFG.SEARCH_TOP_K,
     )
     response_search = call_search_vector_hybrid(inputs=search_input)
-
-    context = [item["content"] for item in response_search]
-    metadata = []
     response_docs_qa: dict = await call_completion_qa(
         message=data.sender_message,
         language=chat_request.language,
         conversation_history=chat_request.histories,
-        context=context,
-        metadata=metadata,
+        context=response_search,
     )
     logger.info("DOCS QA ANSWER: %s", response_docs_qa)
     return response_docs_qa
@@ -72,9 +68,8 @@ async def call_completion_qa(
         language,
         conversation_history,
         context,
-        metadata,
 ):
-    context_str = format_context(context=context)
+    context_str = format_context(contexts=context)
     histories_str = get_conversation_histories(histories=conversation_history)
     formatted_prompt = PROMPT_DOCS_QA.format(
         message=message,
@@ -84,9 +79,25 @@ async def call_completion_qa(
     )
     logger.info("DOCS QA PROMPT: %s", formatted_prompt)
     docs_response = await call_model_gemini(formatted_prompt)
+
+    qa_response = docs_response.get("response")
+    source_response = docs_response.get("source")
+    if source_response:
+        qa_response += f"\n\nReference: {source_response}"
+        docs_response["response"] = qa_response
+
     return docs_response
 
 
-def format_context(context):
-    context_str = " ".join(context)
+def format_context(contexts):
+    context_str = ""
+    for context in contexts:
+        title = context["title"]
+        content = context["content"]
+        source = context["source"]
+        context_str += f"\t<title>{title}</title>\n"
+        context_str += f"\t<content>{content}</content>\n"
+        context_str += f"\t<source>{source}</source>\n"
+        context_str += "\n-----------------------\n"
+
     return context_str

@@ -12,13 +12,11 @@ Please note the following:
 - In cases where multiple pieces of content relate to the question, suggest specific items based on the document content.
 - All responses should be in {language}.
 
-Internal information is below:
----------------------
-<start document>
-{context}
-<end document>
----------------------
 Given the context information and not prior knowledge to answer the query.
+Document is below:
+<documents>
+{context}
+</documents>
 
 <conversation_history>
 {histories}
@@ -26,8 +24,9 @@ Given the context information and not prior knowledge to answer the query.
 
 Your response should be in JSON format with the following mandatory fields:
 {{
-    "response": "The answer, based on reasoning and internal documents, in {language}.",
+    "response": "The answer, based on reasoning and documents, in {language}.",
     "follow_up": "List of 2 follow-up questions that the user may ask about your answer. Use first person."
+    "source": "source link corresponding to document used in the 'response'"
 }}
 
 The user query is {message}.
