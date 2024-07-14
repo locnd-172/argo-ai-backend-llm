@@ -2,7 +2,6 @@
   "facility_id": "uuid4",
   "name": "dolphin",
   "area": 123.45,
-//  "crop_type": "rice",
   "owner": "loc",
   "location": {
     "address": "VHJ6+PH3, Đất, Thôn, Cầu, Xuân Trường, Thành phố Đà Lạt, Lâm Đồng, Vietnam",

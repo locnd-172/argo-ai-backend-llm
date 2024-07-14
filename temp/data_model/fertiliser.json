@@ -1,0 +1,7 @@
+{
+  "facility_id": "uuid4",
+  "fertiliser_type": "",
+  "application_rate": "kg/ha",
+  "application_method": "",
+  "date": "dd/mm/yyyy"
+}

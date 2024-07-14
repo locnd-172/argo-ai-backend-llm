@@ -1,7 +1,6 @@
 {
   "datetime": "April 12, 2024 at 7:00:00AM UTC+7",
   "field_id": "uuid4",
-  "fertilize": null,
   "irrigation": {
     "water_consumed": 511.51,
     "water_discharged": null,
@@ -15,7 +14,11 @@
     "severity_of_infestations": 1.18
   },
   "soil": {
+    "soil_texture": "clay/silt/sandy",
+    "soil_type": "",
+    "soil_drainage": "good/bad",
     "soil_moisture": 43.6,
+    "soil_moisture_average": "moist",
     "soil_nutrient_levels": null,
     "soil_ph": null,
     "soil_temperature": 18.6

@@ -1,8 +1,14 @@
 {
-  "_id": "field_001",
   "facility_id": "farm_001",
   "name": "North Field",
-  "area": 25,
+  "area": 123.45,
   "crop_type": "rice",
-  "irrigationSystem": "Drip"
+  "owner": "loc",
+  "location": {
+    "address": "VHJ6+PH3, Đất, Thôn, Cầu, Xuân Trường, Thành phố Đà Lạt, Lâm Đồng, Vietnam",
+    "district": "Da Lat",
+    "latitude": 11.8819075448256,
+    "longitude": 108.561573082241,
+    "province": "Lam Dong"
+  }
 }
