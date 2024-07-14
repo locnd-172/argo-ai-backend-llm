@@ -7,57 +7,66 @@ from bs4 import BeautifulSoup
 from docx import Document
 from pdfquery import PDFQuery
 
-from src.module.llm.gemini.gemini_services import call_model_gemini
-from src.module.llm.prompts.prompt_docs_process import PROMPT_CATEGORY_DOCUMENT, PROMPT_PREPROCESS_HTML
-from src.utils.logger import logger
-from src.module.llm.embedding.gemini_embedding import GeminiEmbeddingModel
 from src.module.databases.zillizdb.zilliz_services import insert_documents_to_zilliz
+from src.module.llm.embedding.gemini_embedding import GeminiEmbeddingModel
+from src.module.llm.gemini.gemini_services import call_model_gemini
+from src.module.llm.prompts.prompt_docs_process import PROMPT_CATEGORY_DOCUMENT
+from src.utils.logger import logger
+
+
+async def get_document_category(document):
+    formatted_prompt = PROMPT_CATEGORY_DOCUMENT.format(document=document)
+    response = await call_model_gemini(formatted_prompt)
+    title = response['title']
+    language = response['language']
+    return title, language
+
 
 class DocsHandler:
-    def __init__(self, document_file=None, document_link=None):
+    def __init__(self, document_file=None, document_link=None, document_text=None):
         self.chunk_step = 500
         self.document_file = document_file
         self.document_link = document_link
+        self.document_text = document_text
         self.source = ""
         self.embedding_model = GeminiEmbeddingModel()
 
     async def handle_document(self):
         document = None
-        if self.document_file is not None:
+        if self.document_text is not None:
+            document = self.document_text
+            self.source = ""
+        elif self.document_file is not None:
             if self.document_file.filename.endswith('.pdf'):
                 document = self.read_pdf()
                 self.source = self.document_file.filename
-                # print(document)
             elif self.document_file.filename.endswith('.docx'):
                 document = self.read_docx()
                 self.source = self.document_file.filename
-                # print(document)
         elif self.document_link is not None:
             document = self.read_link()
             self.source = self.document_link
-            # print(document)
         else:
             logger.info('Invalid link or file')
         if document is None:
             return None
         else:
-            title, language = await self.get_document_category(document)
+            title, language = await get_document_category(document)
             chunked_document = self.chunk_document(document)
             document_table = []
             for chunk in chunked_document:
                 text = chunk
                 id = str(uuid.uuid4())
-                embedding = self.embedding_model.get_embedding(text = text, task_type="RETRIEVAL_DOCUMENT")
+                embedding = self.embedding_model.get_embedding(text=text, task_type="RETRIEVAL_DOCUMENT")
                 document_table.append({'id': id,
                                        'title': title,
                                        'language': language,
                                        'source': self.source,
-                                       'text': text,
+                                       'content': text,
                                        'vector': embedding['embedding']})
             document_df = pd.DataFrame(document_table)
             insert_documents_to_zilliz(document_table)
             return document_df
-            # print("CATEGORY: ", title, language)
 
     def read_docx(self):
         file = io.BytesIO(self.document_file.file.read())
@@ -91,16 +100,13 @@ class DocsHandler:
 
     def read_link(self):
         soup = self.pull_url()
-
         for script in soup(["script", "style"]):
             script.extract()
 
         text = soup.get_text()
-
         lines = (line.strip() for line in text.splitlines())
         chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
         paragraph = '\n'.join(chunk for chunk in chunks if chunk)
-
         return paragraph
 
     def chunk_document(self, document):
@@ -113,12 +119,3 @@ class DocsHandler:
             chunked_documents.append(chunked_document)
 
         return chunked_documents
-
-    async def get_document_category(self, document):
-        formatted_prompt = PROMPT_CATEGORY_DOCUMENT.format(document=document)
-        response = await call_model_gemini(formatted_prompt)
-        title = response['title']
-        # category = response['category']
-        language = response['language']
-
-        return title, language

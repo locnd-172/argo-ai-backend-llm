@@ -1,9 +1,9 @@
-from typing import Optional
-
-from fastapi import UploadFile
 from pydantic import BaseModel, Field
 
 
-class DocsModel(BaseModel):
-    docs_link: Optional[str]
-    docs_file: Optional[UploadFile]
+class UploadLinkModel(BaseModel):
+    document_link: str = ""
+
+
+class UploadTextModel(BaseModel):
+    document_text: str = Field("")

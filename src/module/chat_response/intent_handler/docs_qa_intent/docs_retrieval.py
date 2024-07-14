@@ -1,4 +1,5 @@
-from src.module.databases.zillizdb.zilliz_services import retrieve_documents_from_zilliz
+from src.module.databases.zillizdb.zilliz_services import \
+    retrieve_documents_from_zilliz
 from src.utils.logger import logger
 
 

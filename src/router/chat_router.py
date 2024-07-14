@@ -18,7 +18,8 @@ async def generate_chat_response_api(
         file: Optional[UploadFile] = File(None)
 ) -> Dict[str, Any]:
     logger.info("------------------ API - Generate chat response")
-    logger.info(f"MESSAGE: %s", sender_message)
+    logger.info("MESSAGE: %s", sender_message)
+    logger.info("FILE: %s", file)
     try:
         histories = cache_history_service.read_cache_by_session_id(session_id)
 

@@ -10,8 +10,6 @@ class ZillizClient:
         self.uri = f'https://{ZillizCFG.ZILLIZDB_HOST}'
         self.token = ZillizCFG.ZILLIZDB_TOKEN
         self.collection_name = collection_name
-        logger.info("uri: %s", self.uri)
-        logger.info("token: %s", self.token)
         logger.info("index: %s", self.collection_name)
         self.client = self.connect_db()
 

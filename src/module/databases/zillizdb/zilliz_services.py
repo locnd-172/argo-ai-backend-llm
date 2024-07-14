@@ -1,4 +1,5 @@
 import json
+import traceback
 
 from src.config.constant import ZillizCFG
 from src.module.databases.zillizdb.zilliz_client import ZillizClient
@@ -6,12 +7,14 @@ from src.utils.logger import logger
 
 
 def insert_documents_to_zilliz(documents):
+    filtered_item = [{key: value for key, value in item.items() if key != 'vector'} for item in documents]
+    logger.info("filtered_item: %s", json.dumps(filtered_item, indent=4, ensure_ascii=False))
     try:
         zilliz = ZillizClient(ZillizCFG.ZILLIZDB_COLLECTION_NAME_DOCUMENTS)
         zilliz.insert_records(documents)
         return True
     except Exception as e:
-        logger.error(e)
+        logger.error(e, traceback.format_exc())
         return False
 
 
