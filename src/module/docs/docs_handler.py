@@ -23,11 +23,12 @@ async def get_document_category(document):
 
 
 class DocsHandler:
-    def __init__(self, document_file=None, document_link=None, document_text=None):
+    def __init__(self, document_file=None, document_link=None, document_text=None, document_title=None):
         self.chunk_step = 500
         self.document_file = document_file
         self.document_link = document_link
         self.document_text = document_text
+        self.document_title = document_title
         self.source = ""
         self.embedding_model = GeminiEmbeddingModel()
 
@@ -48,10 +49,13 @@ class DocsHandler:
             self.source = self.document_link
         else:
             logger.info('Invalid link or file')
+
         if document is None:
             return None
         else:
             title, language = await get_document_category(document)
+            if self.document_title is not None:
+                title = self.document_title
             chunked_document = self.chunk_document(document)
             document_table = []
             for chunk in chunked_document:
