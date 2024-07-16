@@ -36,9 +36,13 @@ async def upload_docs_file_api(document_file: UploadFile = File(..., description
 @router.post(path="/uploadText", description="Upload document using plain text")
 async def upload_docs_text_api(document: UploadTextModel):
     logger.info("------------------ API - Upload text")
+    logger.info(f"TITLE: %s", document.document_title)
     logger.info(f"TEXT: %s", document.document_text)
     try:
-        response = await call_docs_handler(document_text=document.document_text)
+        response = await call_docs_handler(
+            document_title=document.document_title,
+            document_text=document.document_text,
+        )
         return response
     except Exception as err:
         logger.error("[X] Exception in uploading docs: %s, %s", err, traceback.format_exc())

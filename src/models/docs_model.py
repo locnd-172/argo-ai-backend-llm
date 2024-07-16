@@ -6,4 +6,5 @@ class UploadLinkModel(BaseModel):
 
 
 class UploadTextModel(BaseModel):
+    document_title: str = Field("")
     document_text: str = Field("")
