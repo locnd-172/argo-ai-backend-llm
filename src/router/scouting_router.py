@@ -12,9 +12,9 @@ router = APIRouter(prefix="/api/v1/scouting", tags=["scouting"])
 
 @router.post(path="/processReport")
 async def process_scouting_report_api(
-        facility: str = Form("1"),
+        facility: str = Form(""),
         plant: str = Form(""),
-        date: str = Form("15/07/2024"),
+        date: str = Form(""),
         description: str = Form(""),
         file: Optional[UploadFile] = File(None)
 ) -> Dict[str, Any]:
@@ -27,5 +27,5 @@ async def process_scouting_report_api(
 
         return response
     except Exception as err:
-        logger.error("[X] Exception in generate answer: %s, %s", err, traceback.format_exc())
+        logger.error("[X] Exception in process scouting report: %s, %s", err, traceback.format_exc())
         return {"response": "An error occurred while processing your request."}

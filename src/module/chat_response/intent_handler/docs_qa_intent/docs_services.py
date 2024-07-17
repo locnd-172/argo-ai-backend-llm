@@ -83,7 +83,7 @@ async def call_completion_qa(
     qa_response = docs_response.get("response")
     source_response = docs_response.get("source")
     if source_response:
-        qa_response += f"\n\nReference: {source_response}"
+        qa_response += f"\n\nReference: [{source_response}]({source_response})"
         docs_response["response"] = qa_response
 
     return docs_response

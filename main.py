@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from src.config.core import settings
 from src.router.chat_router import router as chat_router
 from src.router.docs_router import router as docs_router
+from src.router.ghg_emission_router import router as ghg_emission_router
 from src.router.main_router import router as main_router
 from src.router.scouting_router import router as scouting_router
 
@@ -25,3 +26,4 @@ app.include_router(router=main_router)
 app.include_router(router=chat_router)
 app.include_router(router=docs_router)
 app.include_router(router=scouting_router)
+app.include_router(router=ghg_emission_router)
