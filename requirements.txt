@@ -5,9 +5,7 @@ uvicorn==0.24.0
 python-dotenv==1.0.0
 google-generativeai==0.3.2
 tenacity==8.2.3
-mysql-connector-python
 openpyxl==3.1.5
-mysql~=0.0.3
 pandas~=2.2.1
 firebase-admin
 pymilvus==2.4.0
