@@ -22,15 +22,30 @@ async def process_emission_input(emission_data):
     return emission_info
 
 def calculate_ghg_emission(irrigation_data,
+                           organic_amendment_data,
                            land_management_data,
                            crop_protection_data,
                            energy_data):
     # print(irrigation_data)
+    # print(organic_amendment_data)
     # print(land_management_data)
     # print(crop_protection_data)
     # print(energy_data)
     ghg_emission_calculator = GHGEmissionCalculator(irrigation_data,
+                                                    organic_amendment_data,
                                                     land_management_data,
                                                     crop_protection_data,
                                                     energy_data)
-    print("EMISSION VALUE: ", ghg_emission_calculator.calculate_emission())
+    # print("EMISSION VALUE: ", ghg_emission_calculator.calculate_emission())
+    (total_emission,
+     irrigation_emission,
+     land_management_emission,
+     crop_protection_emission,
+     energy_emission) = ghg_emission_calculator.calculate_emission()
+    return {
+        'total_emission': total_emission,
+        'irrigation_emission': irrigation_emission,
+        'land_management_emission': land_management_emission,
+        'crop_protection_emission': crop_protection_emission,
+        'energy_emission': energy_emission
+    }

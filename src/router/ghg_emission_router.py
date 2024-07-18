@@ -3,7 +3,7 @@ from typing import Any, Dict, List
 
 from fastapi import APIRouter
 
-from src.models.ghg_emission_model import GHGEmissionModel, Irrigation, Energy, CropProtection, LandManagament
+from src.models.ghg_emission_model import GHGEmissionModel, Irrigation, Energy, CropProtection, LandManagement, OrganicAmendment
 from src.module.ghg_emission.ghg_emission_services import process_ghg_emission, calculate_ghg_emission
 from src.utils.logger import logger
 
@@ -23,14 +23,15 @@ async def process_emission_status_api(data: GHGEmissionModel) -> Dict[str, Any]:
 
 @router.post(path="/calculateEmission")
 def calculate_emission_api(irrigation: Irrigation,
-                          land_management: LandManagament,
-                          crop_protection:  List[CropProtection],
-                          energy: Energy):
+                           organic_amendment: OrganicAmendment,
+                           land_management: LandManagement,
+                           crop_protection:  CropProtection,
+                           energy: Energy) -> Dict[str, Any]:
     logger.info("------------------ API - Calculate GHG emission")
     # logger.info("EMISSION DATA: %s", data)
     try:
-        response = calculate_ghg_emission(irrigation, land_management, crop_protection, energy)
-        return None
+        response = calculate_ghg_emission(irrigation, organic_amendment, land_management, crop_protection, energy)
+        return response
     except Exception as err:
         logger.error("[X] Exception in calculate emission data: %s, %s", err, traceback.format_exc())
         return {"response": "An error occurred while processing your request."}
