@@ -1,0 +1,21 @@
+{
+  "created_time": "utc_time",
+  "field": "uuid4",
+  "reporter": "loc",
+  "description": "textual desc",
+  "image": [],
+  "health_evaluation": "good/bad",
+  "assessment": "overall assessment of farming plant or cropping base on provided scouting report description",
+  "soil_report": "",
+  "soil_status": "",
+  "growth_report": "growth status report of asked plant",
+  "growth_status": "your evaluation on plant growth status. one of following: good, monitor, bad, risk",
+  "water_report": "water status report of asked plant/farming/cultivation",
+  "water_status": "water status of asked plant/farming/cultivation",
+  "pest_report": "pest status report of asked plant",
+  "pest_status": "your evaluation on current pest status. one of following: good, bad",
+  "disease_report": "disease status of asked plant/farming",
+  "disease_status": "your evaluation on current disease status. one of following: good, bad",
+  "other_report": "other metrics or additional information report",
+  "suggestion": ""
+}

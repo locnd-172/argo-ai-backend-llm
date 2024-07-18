@@ -1,9 +1,7 @@
 from datetime import datetime
 
-import mysql.connector
-from mysql.connector import Error
-
-from src.config.constant import MySQLCFG
+from src.config.constant import FirebaseCFG
+from src.module.databases.firebase.firestore import FirestoreWrapper
 from src.module.llm.gemini.gemini_services import call_model_gemini
 from src.module.llm.prompts.prompt_report import (
     PROMPT_EXTRACT_REPORT_INFO,
@@ -13,32 +11,8 @@ from src.utils.helpers import get_current_date
 from src.utils.logger import logger
 
 
-async def connect_and_query(query):
-    try:
-        connection = mysql.connector.connect(
-            host=MySQLCFG.MYSQL_HOST,
-            database=MySQLCFG.MYSQL_DATABASE,
-            user=MySQLCFG.MYSQL_USER,
-            password=MySQLCFG.MYSQL_PASSWORD
-        )
-
-        if connection.is_connected():
-            logger.info("Successfully connected to the databases")
-            cursor = connection.cursor(dictionary=True)
-            cursor.execute(query)
-            records = cursor.fetchall()
-            logger.info("Total number of rows in result: %s", cursor.rowcount)
-            cursor.close()
-            connection.close()
-            logger.info("MySQL connection is closed")
-            return records
-    except Error as e:
-        print("Error while connecting to MySQL", e)
-
-
 async def query_report_data(inputs):
     current_date = str(get_current_date())
-    # date = current_date
     logger.info("CURRENT DATE: %s", current_date)
     date_str = inputs.get("period", current_date)
     date_object = datetime.strptime(date_str, "%d/%m/%Y")
@@ -55,11 +29,14 @@ async def query_report_data(inputs):
         metrics.extend(["max_temperature", "min_temperature", "wind", "wind_direction", "humidity", "cloud",
                         "atmospheric_pressure"])
 
-    metrics_str = ",".join(metrics)
-    query = f'SELECT {metrics_str} FROM gathering WHERE datetime = "{date}";'
-    logger.info("REPORT QUERY: %s", query)
-    res = await connect_and_query(query)
-    return res
+    firestore = FirestoreWrapper()
+    mrv_data = await firestore.retrieve_data(
+        collection_name=FirebaseCFG.FS_COLLECTION_MRV,
+        query_filters=[("date", "=", date)]
+    )
+
+    logger.info("REPORT DATA: %s", mrv_data)
+    return mrv_data
 
 
 async def gen_report_answer(report_data, language, report_info):
