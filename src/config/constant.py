@@ -5,13 +5,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-class MySQLCFG:
-    MYSQL_HOST = os.environ["MYSQL_HOST"]
-    MYSQL_DATABASE = os.getenv("MYSQL_DATABASE", "argo_ai")
-    MYSQL_USER = os.getenv("MYSQL_USER", "username")
-    MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD", "password")
-
-
 class GeminiAiCFG:
     API_KEY = os.environ["GEMINI_API_KEY"]
     API_MODEL = os.getenv("GEMINI_API_MODEL", "gemini-pro")
@@ -40,8 +33,9 @@ class LanguageCFG:
 
 
 class FirebaseCFG:
-    FS_COLLECTION = "argo_ai_chatbot_collection"
-    FS_DOCUMENT = "argo_ai_chatbot_document"
+    FS_CERTIFICATE_PATH = "src/config/argoai-63051-firebase-adminsdk-ykwbi-a14bbb8c68.json"
+    FS_COLLECTION_EMISSION_FACTORS = "emission_factors"
+    FS_COLLECTION_MRV = "mrv_system"
 
 
 class ZillizCFG:

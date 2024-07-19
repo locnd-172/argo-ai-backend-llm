@@ -1,0 +1,14 @@
+{
+  "name": "Continuous Flooding",
+  "co2": 0,
+  "co2_unit": "kg/ha",
+  "ch4": 1.3,
+  "ch4_unit": "kg/ha",
+  "n2o": 0,
+  "n2o_unit": "kg/ha",
+  "source": "IPCC 2006 Guidelines",
+  "link": "https://www.ipcc-nggip.iges.or.jp/public/2006gl/",
+  "type": "cultivation",
+  "scope": 1,
+  "created_time": ""
+}
