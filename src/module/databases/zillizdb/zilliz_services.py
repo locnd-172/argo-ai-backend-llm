@@ -37,3 +37,9 @@ def retrieve_all_documents_from_zilliz(index):
     zilliz = ZillizClient(collection_name=index)
     search_results = zilliz.get_all_documents()
     return search_results
+
+
+def delete_documents_from_zilliz(ids=None, filters=""):
+    zilliz = ZillizClient(collection_name=ZillizCFG.ZILLIZDB_COLLECTION_NAME_DOCUMENTS)
+    delete_results = zilliz.delete_by_id(ids, filters)
+    return delete_results

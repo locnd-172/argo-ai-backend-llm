@@ -1,6 +1,7 @@
-import json
-
-from src.module.databases.zillizdb.zilliz_services import retrieve_all_documents_from_zilliz
+from src.module.databases.zillizdb.zilliz_services import (
+    retrieve_all_documents_from_zilliz,
+    delete_documents_from_zilliz
+)
 from src.module.docs.docs_handler import DocsHandler
 from src.utils.logger import logger
 
@@ -17,7 +18,7 @@ async def call_docs_handler(document_link=None, document_file=None, document_tex
     return {'STATUS': document_df is not None}
 
 
-async def call_get_docs(collection_name):
+async def get_all_docs(collection_name):
     records = retrieve_all_documents_from_zilliz(collection_name)
     documents = []
     document_titles = []
@@ -31,3 +32,12 @@ async def call_get_docs(collection_name):
     logger.info("records length: %s", len(records))
     logger.info("documents length: %s", len(documents))
     return {"total": len(documents), "documents": documents}
+
+
+async def delete_docs_by_title(data):
+    document_titles = data.document_titles
+    filter_str = f"title in {document_titles}"
+    delete_result = delete_documents_from_zilliz(filters=filter_str)
+
+    logger.info("delete result: %s", delete_result)
+    return {"result": delete_result, "message": "Deleted successfully"}

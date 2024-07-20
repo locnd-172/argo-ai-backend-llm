@@ -2,8 +2,8 @@ import traceback
 
 from fastapi import APIRouter, UploadFile, File
 
-from src.models.docs_model import UploadLinkModel, UploadTextModel
-from src.module.docs.docs_service import call_docs_handler, call_get_docs
+from src.models.docs_model import UploadLinkModel, UploadTextModel, DeleteDocumentModel
+from src.module.docs.docs_service import call_docs_handler, get_all_docs, delete_docs_by_title
 from src.utils.logger import logger
 
 router = APIRouter(prefix="/api/v1/docs", tags=["docs"])
@@ -53,8 +53,19 @@ async def upload_docs_text_api(document: UploadTextModel):
 async def get_all_docs_api(collection: str):
     logger.info("------------------ API - Get all documents")
     try:
-        response = await call_get_docs(collection)
+        response = await get_all_docs(collection)
         return response
     except Exception as err:
         logger.error("[X] Exception in get all docs: %s, %s", err, traceback.format_exc())
+        return {"response": "Unknown error"}
+
+
+@router.delete(path="/deleteDocumentByName", description="delete document from knowledgebase")
+async def delete_docs_by_title_api(data: DeleteDocumentModel):
+    logger.info("------------------ API - Delete documents by title")
+    try:
+        response = await delete_docs_by_title(data)
+        return response
+    except Exception as err:
+        logger.error("[X] Exception in delete docs by title: %s, %s", err, traceback.format_exc())
         return {"response": "Unknown error"}

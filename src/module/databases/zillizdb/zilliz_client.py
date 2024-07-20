@@ -73,3 +73,14 @@ class ZillizClient:
             output_fields=["id", "title", "content", "source"],
         )
         return results
+
+    def delete_by_id(self, ids=None, filters=""):
+        try:
+            self.client.delete(
+                collection_name=self.collection_name,
+                ids=ids,
+                filter=filters
+            )
+            return True
+        except Exception as e:
+            return False
