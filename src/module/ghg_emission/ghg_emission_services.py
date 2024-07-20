@@ -26,11 +26,6 @@ def calculate_ghg_emission(irrigation_data,
                            land_management_data,
                            crop_protection_data,
                            energy_data):
-    # print(irrigation_data)
-    # print(organic_amendment_data)
-    # print(land_management_data)
-    # print(crop_protection_data)
-    # print(energy_data)
     ghg_emission_calculator = GHGEmissionCalculator(irrigation_data,
                                                     organic_amendment_data,
                                                     land_management_data,

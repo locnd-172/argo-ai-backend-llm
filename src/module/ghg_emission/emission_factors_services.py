@@ -6,7 +6,6 @@ from src.config.constant import FirebaseCFG
 from src.module.databases.firebase.firestore import FirestoreWrapper
 from src.utils.logger import logger
 
-
 async def get_all_emission_factors():
     firestore = FirestoreWrapper()
     emission_factors = await firestore.retrieve_data(FirebaseCFG.FS_COLLECTION_EMISSION_FACTORS)

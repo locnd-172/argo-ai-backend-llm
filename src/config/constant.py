@@ -57,3 +57,8 @@ class AppMessages:
 class RetrievalCFG:
     SEARCH_INDEX = os.environ["SEARCH_INDEX"]
     SEARCH_TOP_K = os.environ["SEARCH_TOP_K"]
+
+class EmissionCFG:
+    CH4_CONVERSION_VALUE = 25
+    N2O_CONVERSION_VALUE = 298
+    SCALING_FACTOR_VALUE = 0.59
