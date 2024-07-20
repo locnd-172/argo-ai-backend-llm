@@ -18,10 +18,10 @@ async def get_all_emission_factors():
 
     sorted_emission_factors = sorted(
         emission_factors,
-        key=lambda item: datetime.fromtimestamp(item["created_time"]),
+        key=lambda ef_item: datetime.fromtimestamp(ef_item["created_time"]),
         reverse=True
     )
-    logger.info(f"SORTED EF LIST: %s", json.dumps(sorted_emission_factors, indent=2))
+    # logger.info(f"SORTED EF LIST: %s", json.dumps(sorted_emission_factors, indent=2))
     logger.info(f"SORTED EF LENGTH: %s", len(sorted_emission_factors))
     return sorted_emission_factors
 
