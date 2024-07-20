@@ -16,6 +16,14 @@ You must respond in the following structured JSON format, all fields are mandato
 The user message is {message}.
 """
 
+PROMPT_CALL_FUNCTION_GET_REPORT_INFO = """
+Analyze user message and extract information: facility, plant, date, metrics.
+These are input filter to query data from firestore. 
+Metrics are list of followings: soil, weather, irrigation, pest.
+if no operator of filter is specified, return default `==` operator.
+User message is: {user_message}
+"""
+
 PROMPT_REPORT = """
 # Introduction
 You are an operations monitoring assistant for an agricultural management system that utilizes IoT and sensors.
@@ -25,11 +33,10 @@ Your task is to understand the reporting metrics related to agricultural farming
 Your reports should be concise, easy to understand, and include evaluative commentary on the current data.
 
 # Context
-The current facility is {facility}. 
-The plant is {plant}.
-The time period is {period}.
 The current report is as follows:
+```
 {report_data}.
+```
 
 You must respond in the following structured JSON format, all fields are mandatory:
 {{
@@ -37,3 +44,6 @@ You must respond in the following structured JSON format, all fields are mandato
     "follow_up": "List of 2 follow-up questions that the user may ask about your answer. Use first person."
 }}
 """
+# The current facility is {facility}.
+# The plant is {plant}.
+# The time period is {period}.

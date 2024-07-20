@@ -2,6 +2,7 @@ from typing import Dict, Any, List
 
 import firebase_admin
 from firebase_admin import credentials, firestore
+from google.cloud.firestore_v1 import FieldFilter
 
 from src.config.constant import FirebaseCFG
 
@@ -33,7 +34,7 @@ class FirestoreWrapper:
 
         if query_filters:
             for field, operator, value in query_filters:
-                collection_ref = collection_ref.where(field, operator, value)
+                collection_ref = collection_ref.where(filter=FieldFilter(field, operator, value))
 
         docs = collection_ref.stream()
         return [{"id": doc.id, **doc.to_dict()} for doc in docs]

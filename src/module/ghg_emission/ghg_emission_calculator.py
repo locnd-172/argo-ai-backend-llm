@@ -3,8 +3,11 @@ import asyncio
 
 from src.config.constant import EmissionCFG
 from src.module.ghg_emission.emission_factors_services import get_all_emission_factors
+
+
 class GHGEmissionCalculator:
-    def __init__(self, irrigation_data, organic_amendment_data, land_management_data, crop_protection_data, energy_data):
+    def __init__(self, irrigation_data, organic_amendment_data, land_management_data, crop_protection_data,
+                 energy_data):
         self.irrigation_data = irrigation_data
         self.organic_amendment_data = organic_amendment_data
         self.land_management_data = land_management_data
@@ -21,6 +24,7 @@ class GHGEmissionCalculator:
         emission_factor_table = emission_factor_table[::-1]
         emission_factor_table = pd.DataFrame(emission_factor_table)
         return emission_factor_table
+
     def calculate_emission(self):
         irrigation_emission = self.calculate_irrigation_emission()
         land_management_emission = self.calculate_land_management_emission()
@@ -143,8 +147,8 @@ class GHGEmissionCalculator:
         insecticide_emission_factor = self.get_emission_factor(13)
         insecticide_value = self.crop_protection_data.insecticide_value
         crop_protection_emission += (insecticide_value * insecticide_emission_factor['co2']
-                                    + insecticide_value * insecticide_emission_factor['ch4'] * self.CH4_VALUE
-                                    + insecticide_value * insecticide_emission_factor['n2o'] * self.N2O_VALUE)
+                                     + insecticide_value * insecticide_emission_factor['ch4'] * self.CH4_VALUE
+                                     + insecticide_value * insecticide_emission_factor['n2o'] * self.N2O_VALUE)
 
         return crop_protection_emission
 

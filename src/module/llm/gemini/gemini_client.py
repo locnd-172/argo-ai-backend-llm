@@ -12,11 +12,12 @@ def post_process_json_string(text: str):
 
 class GeminiAI:
 
-    def __init__(self, api_key, api_model):
+    def __init__(self, api_key, api_model, tools=None):
         genai.configure(api_key=api_key)
         self.model = genai.GenerativeModel(
             model_name=api_model,
-            generation_config={"response_mime_type": "application/json"}
+            generation_config={"response_mime_type": "application/json"} if tools is None else None,
+            tools=tools,
         )
 
     async def generate_content(self, prompt: str):
