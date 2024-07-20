@@ -9,6 +9,12 @@ class GHGEmissionModel(BaseModel):
     period: str = Field(..., description="emission period")
     emission_data: Any = Field(..., description="emission data")
 
+
+class EmissionFacility(BaseModel):
+    facility_name: str = Field(..., description="emission facility name")
+    plant: str = Field(..., description="emission plant")
+
+
 class OrganicAmendment(BaseModel):
     # type: str = Field(..., description="organic amendment")
     # value: int = Field(..., description="organic amendment value")
@@ -17,15 +23,19 @@ class OrganicAmendment(BaseModel):
     compost_value: float = Field(..., description="compost value")
     farm_yard_manure_value: float = Field(..., description="farm yard manure value")
     green_manure_value: float = Field(..., description="green manure value")
+
+
 class Irrigation(BaseModel):
     days_flooded: int = Field(..., description="days flooded")
     # irrigation_type: str = Field(..., description="irrigation type")
     is_continuous_flooding: bool = Field(False, description="is continuous flooding")
     is_single_aeration: bool = Field(False, description="is single aeration")
-    is_multiple_aeration: bool  = Field(False, description="is multiple aeration")
+    is_multiple_aeration: bool = Field(False, description="is multiple aeration")
     is_rainfed: bool = Field(False, description="is rainfed")
     is_upland: bool = Field(False, description="is upland")
     area: float = Field(..., description="area")
+
+
 class CropProtection(BaseModel):
     # type: str = Field(..., description="crop protection type")
     # value: int = Field(..., description="crop protection value")
@@ -33,6 +43,8 @@ class CropProtection(BaseModel):
     herbicide_value: float = Field(..., description="herbicide value")
     fungicide_value: float = Field(..., description="fungicide value")
     insecticide_value: float = Field(..., description="insecticide value")
+
+
 # class CropResidue(BaseModel):
 #     # type: str = Field(..., description="crop residue type")
 #     # value: int = Field(..., description="crop residue value")
@@ -43,8 +55,9 @@ class LandManagement(BaseModel):
     incineration_value: float = Field(..., description="incineration value")
     crop_burning_value: float = Field(..., description="crop_burning value")
     composting_value: float = Field(..., description="composting value")
+
+
 class Energy(BaseModel):
     diesel_value: float = Field(..., description="diesel value")
     gasoline_value: float = Field(..., description="gasoline value")
     electricity_value: float = Field(..., description="electricity value")
-

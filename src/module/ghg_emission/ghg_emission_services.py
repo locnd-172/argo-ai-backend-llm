@@ -15,23 +15,27 @@ async def process_ghg_emission(data):
     ghg_emission_resp = await call_model_gemini(formatted_prompt)
     logger.info("GHG EMISSION RESULT: %s", ghg_emission_resp)
     return ghg_emission_resp
+
+
 async def process_emission_input(emission_data):
     emission_info = ""
     for key, value in emission_data.items():
         emission_info += f"{key}: {value}\n"
     return emission_info
 
+
 def calculate_ghg_emission(irrigation_data,
                            organic_amendment_data,
                            land_management_data,
                            crop_protection_data,
                            energy_data):
-    ghg_emission_calculator = GHGEmissionCalculator(irrigation_data,
-                                                    organic_amendment_data,
-                                                    land_management_data,
-                                                    crop_protection_data,
-                                                    energy_data)
-    # print("EMISSION VALUE: ", ghg_emission_calculator.calculate_emission())
+    ghg_emission_calculator = GHGEmissionCalculator(
+        irrigation_data=irrigation_data,
+        organic_amendment_data=organic_amendment_data,
+        land_management_data=land_management_data,
+        crop_protection_data=crop_protection_data,
+        energy_data=energy_data
+    )
     (total_emission,
      irrigation_emission,
      land_management_emission,

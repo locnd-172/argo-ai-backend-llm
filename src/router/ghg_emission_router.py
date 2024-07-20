@@ -1,9 +1,18 @@
+import asyncio
 import traceback
-from typing import Any, Dict, List
+from typing import Any, Dict
 
 from fastapi import APIRouter
 
-from src.models.ghg_emission_model import GHGEmissionModel, Irrigation, Energy, CropProtection, LandManagement, OrganicAmendment
+from src.models.ghg_emission_model import (
+    GHGEmissionModel,
+    Irrigation,
+    Energy,
+    CropProtection,
+    LandManagement,
+    OrganicAmendment,
+    EmissionFacility
+)
 from src.module.ghg_emission.ghg_emission_services import process_ghg_emission, calculate_ghg_emission
 from src.utils.logger import logger
 
@@ -21,17 +30,28 @@ async def process_emission_status_api(data: GHGEmissionModel) -> Dict[str, Any]:
         logger.error("[X] Exception in process emission data: %s, %s", err, traceback.format_exc())
         return {"response": "An error occurred while processing your request."}
 
+
 @router.post(path="/calculateEmission")
-def calculate_emission_api(irrigation: Irrigation,
-                           organic_amendment: OrganicAmendment,
-                           land_management: LandManagement,
-                           crop_protection:  CropProtection,
-                           energy: Energy) -> Dict[str, Any]:
+def calculate_emission_api(
+        facility: EmissionFacility,
+        irrigation: Irrigation,
+        organic_amendment: OrganicAmendment,
+        land_management: LandManagement,
+        crop_protection: CropProtection,
+        energy: Energy
+) -> Dict[str, Any]:
     logger.info("------------------ API - Calculate GHG emission")
-    # logger.info("EMISSION DATA: %s", data)
     try:
-        response = calculate_ghg_emission(irrigation, organic_amendment, land_management, crop_protection, energy)
-        return response
+        emission_data = calculate_ghg_emission(irrigation, organic_amendment, land_management, crop_protection, energy)
+
+        emission_result = GHGEmissionModel(
+            facility=facility.facility_name,
+            plant=facility.plant,
+            period="",
+            emission_data=emission_data
+        )
+        emission_evaluation = asyncio.run(process_ghg_emission(emission_result))
+        return {"emission_evaluation": emission_evaluation, "emission_result": emission_result}
     except Exception as err:
         logger.error("[X] Exception in calculate emission data: %s, %s", err, traceback.format_exc())
         return {"response": "An error occurred while processing your request."}

@@ -2,7 +2,6 @@ from tenacity import retry, stop_after_attempt, stop_after_delay, wait_fixed
 
 from src.config.constant import GeminiAiCFG
 from src.module.llm.gemini.gemini_client import GeminiAI
-from src.utils.logger import logger
 
 
 @retry(stop=(stop_after_delay(30) | stop_after_attempt(3)), wait=wait_fixed(1))

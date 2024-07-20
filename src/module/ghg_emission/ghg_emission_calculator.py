@@ -36,7 +36,6 @@ class GHGEmissionCalculator:
 
     def calculate_irrigation_emission(self):
         irrigation_emission_factor = self.calculate_irrigation_factor()
-        # print(irrigation_emission_factor)
         days_flooded = self.irrigation_data.days_flooded
         area = self.irrigation_data.area
 
