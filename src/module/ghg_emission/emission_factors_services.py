@@ -6,6 +6,7 @@ from src.config.constant import FirebaseCFG
 from src.module.databases.firebase.firestore import FirestoreWrapper
 from src.utils.logger import logger
 
+
 async def get_all_emission_factors():
     firestore = FirestoreWrapper()
     emission_factors = await firestore.retrieve_data(FirebaseCFG.FS_COLLECTION_EMISSION_FACTORS)
@@ -66,3 +67,19 @@ async def update_one_ef(data):
         "document_id": update_result
     }
     return update_response
+
+
+async def delete_one_ef_by_id(document_id):
+    firestore = FirestoreWrapper()
+    delete_result = await firestore.delete_document(
+        collection_name=FirebaseCFG.FS_COLLECTION_EMISSION_FACTORS,
+        document_id=document_id,
+    )
+    logger.info("DELETE RESULT: %s", delete_result)
+
+    delete_response = {
+        "result": delete_result,
+        "message": "Delete EF data successfully",
+        "document_id": document_id
+    }
+    return delete_response

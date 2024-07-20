@@ -48,3 +48,11 @@ class FirestoreWrapper:
         doc_ref = self.db.collection(collection_name).document(document_id)
         doc_ref.update(updated_data)
         return doc_ref.id
+
+    async def delete_document(self, collection_name: str, document_id: str):
+        try:
+            doc_ref = self.db.collection(collection_name).document(document_id)
+            doc_ref.delete()
+            return True
+        except Exception as e:
+            return False
