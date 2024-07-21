@@ -11,4 +11,4 @@ class UploadTextModel(BaseModel):
 
 
 class DeleteDocumentModel(BaseModel):
-    document_titles: list = Field([], description="List of document titles to delete")
+    document_ids: list = Field([], description="List of document id to delete")

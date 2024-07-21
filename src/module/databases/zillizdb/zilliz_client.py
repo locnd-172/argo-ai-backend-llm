@@ -49,6 +49,7 @@ class ZillizClient:
                     offset=offset,
                     output_fields=[
                         "id",
+                        "document_id",
                         "title",
                         "language",
                         "source",

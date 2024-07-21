@@ -26,7 +26,14 @@ async def get_document_category(document):
 
 
 class DocsHandler:
-    def __init__(self, document_file=None, document_link=None, document_text=None, document_title=None):
+    def __init__(
+            self,
+            document_file=None,
+            document_link=None,
+            document_text=None,
+            document_title=None,
+            document_id=None
+    ):
         self.chunk_step = 500
         self.document_file = document_file
         self.document_link = document_link
@@ -34,6 +41,7 @@ class DocsHandler:
         self.document_title = document_title
         self.source = ""
         self.source_type = SourceType.TEXT
+        self.document_id = document_id
         self.embedding_model = GeminiEmbeddingModel()
 
     async def handle_document(self):
@@ -72,6 +80,7 @@ class DocsHandler:
                 embedding = self.embedding_model.get_embedding(text=text, task_type="RETRIEVAL_DOCUMENT")
                 document_table.append({
                     'id': id,
+                    'document_id': self.document_id,
                     'vector': embedding['embedding'],
                     'title': title,
                     'content': text,

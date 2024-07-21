@@ -4,10 +4,13 @@ from src.module.databases.zillizdb.zilliz_services import (
 )
 from src.module.docs.docs_handler import DocsHandler
 from src.utils.logger import logger
+import uuid
 
 
 async def call_docs_handler(document_link=None, document_file=None, document_text=None, document_title=None):
+    document_id = str(uuid.uuid4())
     docs_handler = DocsHandler(
+        document_id=document_id,
         document_link=document_link,
         document_file=document_file,
         document_text=document_text,
@@ -34,10 +37,12 @@ async def get_all_docs(collection_name):
     return {"total": len(documents), "documents": documents}
 
 
-async def delete_docs_by_title(data):
-    document_titles = data.document_titles
-    filter_str = f"title in {document_titles}"
+async def delete_docs_by_id(data):
+    document_ids = data.document_ids
+    filter_str = f"document_id in {document_ids}"
     delete_result = delete_documents_from_zilliz(filters=filter_str)
 
     logger.info("delete result: %s", delete_result)
+    if not delete_result:
+        raise Exception("Fail to delete document by id %s" % document_ids)
     return {"result": delete_result, "message": "Deleted successfully"}
