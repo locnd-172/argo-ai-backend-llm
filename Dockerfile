@@ -16,6 +16,6 @@ ENV GEMINI_API_KEY=1
 ENV GEMINI_API_MODEL=gemini-pro
 
 #CMD ["uvicorn", "--host", "0.0.0.0", "--port", "8000", "main:app"]
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "2", "--worker-class", "uvicorn.workers.UvicornWorker", "main:app"]
+CMD ["gunicorn", "--timeout", "300", "--bind", "0.0.0.0:8080", "--workers", "2", "--worker-class", "uvicorn.workers.UvicornWorker", "main:app"]
 # uvicorn --host 0.0.0.0 --port 8000 main:app
 # gunicorn --bind 0.0.0.0:8000 --workers 5 --worker-class uvicorn.workers.UvicornWorker main:app

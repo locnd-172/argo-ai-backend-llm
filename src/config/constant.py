@@ -74,3 +74,9 @@ class SourceType:
 class DocumentStatus:
     ACTIVE = "active"
     INACTIVE = "inactive"
+
+
+class BotDefaultMSG:
+    NOT_RELATED_DOCUMENT = "not_related_document"
+    CANNOT_FIND_ANSWER = "cannot_find_answer"
+    NO_ANSWER_MSG = "I'm sorry! ArgoAI can not find answer for your question from our knowledge base."

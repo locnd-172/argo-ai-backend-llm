@@ -68,7 +68,12 @@ class DocsHandler:
         if document is None:
             return None
         else:
-            title, language = await get_document_category(document)
+            try:
+                title, language = await get_document_category(document)
+            except Exception as e:
+                logger.error("Error getting document title and language")
+                title, langauge = "", "vietnamese"
+
             document_size = get_text_size(document)
             if self.document_title is not None:
                 title = self.document_title

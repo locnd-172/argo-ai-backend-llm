@@ -1,4 +1,4 @@
-from src.config.constant import ZillizCFG, RetrievalCFG
+from src.config.constant import ZillizCFG, RetrievalCFG, BotDefaultMSG
 from src.models.search_model import SearchHybridModel
 from src.module.chat_response.intent_handler.docs_qa_intent.docs_helpers import get_conversation_histories
 from src.module.chat_response.intent_handler.docs_qa_intent.docs_retrieval import call_search_vector_hybrid
@@ -70,6 +70,8 @@ async def call_completion_qa(
         context,
 ):
     context_str = format_context(contexts=context)
+    # TODO: check score threshold and call generics intent if needed
+
     histories_str = get_conversation_histories(histories=conversation_history)
     formatted_prompt = PROMPT_DOCS_QA.format(
         message=message,
@@ -82,6 +84,11 @@ async def call_completion_qa(
 
     qa_response = docs_response.get("response")
     source_response = docs_response.get("source")
+
+    if qa_response in [BotDefaultMSG.NOT_RELATED_DOCUMENT, BotDefaultMSG.CANNOT_FIND_ANSWER]:
+        # TODO: call generics intent
+        qa_response = BotDefaultMSG.NO_ANSWER_MSG
+
     if source_response:
         qa_response += f"\n\nReference: [{source_response}]({source_response})"
         docs_response["response"] = qa_response
