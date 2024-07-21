@@ -1,4 +1,5 @@
 import io
+import time
 import uuid
 
 import pandas as pd
@@ -7,10 +8,12 @@ from bs4 import BeautifulSoup
 from docx import Document
 from pdfquery import PDFQuery
 
+from src.config.constant import SourceType, DocumentStatus
 from src.module.databases.zillizdb.zilliz_services import insert_documents_to_zilliz
 from src.module.llm.embedding.gemini_embedding import GeminiEmbeddingModel
 from src.module.llm.gemini.gemini_services import call_model_gemini
 from src.module.llm.prompts.prompt_docs_process import PROMPT_CATEGORY_DOCUMENT
+from src.utils.helpers import get_text_size
 from src.utils.logger import logger
 
 
@@ -30,6 +33,7 @@ class DocsHandler:
         self.document_text = document_text
         self.document_title = document_title
         self.source = ""
+        self.source_type = SourceType.TEXT
         self.embedding_model = GeminiEmbeddingModel()
 
     async def handle_document(self):
@@ -37,6 +41,7 @@ class DocsHandler:
         if self.document_text is not None:
             document = self.document_text
             self.source = ""
+            self.source_type = SourceType.TEXT
         elif self.document_file is not None:
             if self.document_file.filename.endswith('.pdf'):
                 document = self.read_pdf()
@@ -44,9 +49,11 @@ class DocsHandler:
             elif self.document_file.filename.endswith('.docx'):
                 document = self.read_docx()
                 self.source = self.document_file.filename
+            self.source_type = SourceType.FILE
         elif self.document_link is not None:
             document = self.read_link()
             self.source = self.document_link
+            self.source_type = SourceType.URL
         else:
             logger.info('Invalid link or file')
 
@@ -54,6 +61,7 @@ class DocsHandler:
             return None
         else:
             title, language = await get_document_category(document)
+            document_size = get_text_size(document)
             if self.document_title is not None:
                 title = self.document_title
             chunked_document = self.chunk_document(document)
@@ -62,12 +70,18 @@ class DocsHandler:
                 text = chunk
                 id = str(uuid.uuid4())
                 embedding = self.embedding_model.get_embedding(text=text, task_type="RETRIEVAL_DOCUMENT")
-                document_table.append({'id': id,
-                                       'title': title,
-                                       'language': language,
-                                       'source': self.source,
-                                       'content': text,
-                                       'vector': embedding['embedding']})
+                document_table.append({
+                    'id': id,
+                    'vector': embedding['embedding'],
+                    'title': title,
+                    'content': text,
+                    'source': self.source,
+                    'language': language,
+                    'source_type': self.source_type,
+                    'source_size': document_size,
+                    'status': DocumentStatus.ACTIVE,
+                    'created_at': time.time(),
+                })
             document_df = pd.DataFrame(document_table)
             insert_documents_to_zilliz(document_table)
             return document_df
