@@ -3,7 +3,7 @@ from typing import Any, Dict
 
 from fastapi import APIRouter
 
-from src.models.emission_factors_model import EmissionFactorModel
+from src.models.emission_factors_model import EmissionFactorModel, UpdateEmissionFactorModel
 from src.module.ghg_emission.emission_factors_services import get_all_emission_factors, insert_one_ef, update_one_ef, \
     delete_one_ef_by_id
 from src.utils.logger import logger
@@ -35,7 +35,7 @@ async def add_one_ef_api(data: EmissionFactorModel) -> Dict[str, Any]:
 
 
 @router.post(path="/updateOne")
-async def update_one_ef_api(data: EmissionFactorModel) -> Dict[str, Any]:
+async def update_one_ef_api(data: UpdateEmissionFactorModel) -> Dict[str, Any]:
     logger.info("------------------ API - Update one EF")
     logger.info("UPDATE EF: %s", data)
     try:

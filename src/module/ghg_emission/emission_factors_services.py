@@ -14,7 +14,7 @@ async def get_all_emission_factors():
     # handle missing field
     for item in emission_factors:
         if "created_time" not in item or not isinstance(item["created_time"], (int, float)):
-            item["created_time"] = str(time.time())
+            item["created_time"] = time.time()
 
     sorted_emission_factors = sorted(
         emission_factors,
@@ -28,7 +28,10 @@ async def get_all_emission_factors():
 
 async def insert_one_ef(data):
     insert_data = dict(data)
+
+    insert_data["identity_title"] = get_ef_identity_title(data.name)
     insert_data["created_time"] = time.time()
+
     logger.info("INSERT DATA: %s", insert_data)
 
     firestore = FirestoreWrapper()
@@ -50,6 +53,8 @@ async def update_one_ef(data):
     document_id = data.document_id
     update_data = dict(data)
     update_data["created_time"] = time.time()
+    update_data["identity_title"] = get_ef_identity_title(data.name)
+
     logger.info("UPDATE DATA: %s", update_data)
     del update_data["document_id"]
 
@@ -83,3 +88,10 @@ async def delete_one_ef_by_id(document_id):
         "document_id": document_id
     }
     return delete_response
+
+
+def get_ef_identity_title(name):
+    name_words = name.split(" ")
+    name_words = [word.strip().lower() for word in name_words]
+    identity_title = str("_".join(name_words))
+    return identity_title
