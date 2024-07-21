@@ -47,7 +47,16 @@ class ZillizClient:
                     filter="",
                     limit=batch_size,
                     offset=offset,
-                    output_fields=["id", "title", "language", "source", "status", "source_type", "created_at"]
+                    output_fields=[
+                        "id",
+                        "title",
+                        "language",
+                        "source",
+                        "status",
+                        "source_type",
+                        "source_size",
+                        "created_at",
+                    ]
                 )
                 if not documents:
                     break
