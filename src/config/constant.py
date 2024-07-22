@@ -57,6 +57,7 @@ class AppMessages:
 class RetrievalCFG:
     SEARCH_INDEX = os.environ["SEARCH_INDEX"]
     SEARCH_TOP_K = os.environ["SEARCH_TOP_K"]
+    SEARCH_THRESHOLD_RELEVANT = float(os.environ["SEARCH_THRESHOLD_RELEVANT"])
 
 
 class EmissionCFG:

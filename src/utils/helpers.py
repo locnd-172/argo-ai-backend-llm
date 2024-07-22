@@ -1,4 +1,10 @@
+import re
 from datetime import datetime
+
+
+def remove_empty_lines(paragraph):
+    cleaned_paragraph = re.sub(r"\n\s*\n", "\n", paragraph)
+    return cleaned_paragraph.strip()
 
 
 def get_text_size(text, encoding='utf-8'):

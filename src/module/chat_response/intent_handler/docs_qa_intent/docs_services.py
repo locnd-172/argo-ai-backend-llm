@@ -6,6 +6,8 @@ from src.module.databases.zillizdb.zilliz_client import ZillizClient
 from src.module.llm.embedding.gemini_embedding import GeminiEmbeddingModel
 from src.module.llm.gemini.gemini_services import call_model_gemini
 from src.module.llm.prompts.prompt_docs import PROMPT_DOCS_QA
+from src.module.llm.prompts.prompt_generic import PROMPT_GENERIC
+from src.utils.helpers import get_current_datetime, remove_empty_lines
 from src.utils.logger import logger
 
 
@@ -69,29 +71,39 @@ async def call_completion_qa(
         conversation_history,
         context,
 ):
-    context_str = format_context(contexts=context)
-    # TODO: check score threshold and call generics intent if needed
-
-    histories_str = get_conversation_histories(histories=conversation_history)
-    formatted_prompt = PROMPT_DOCS_QA.format(
+    logger.info("LENGTH CONTEXT: %s", len(context))
+    context = filter_threshold(context)
+    logger.info("LENGTH FILTER CONTEXT: %s", len(context))
+    docs_response = {}
+    generic_prompt = PROMPT_GENERIC.format(
         message=message,
-        context=context_str,
         language=language,
-        histories=histories_str
+        now=get_current_datetime()
     )
-    logger.info("DOCS QA PROMPT: %s", formatted_prompt)
-    docs_response = await call_model_gemini(formatted_prompt)
 
-    qa_response = docs_response.get("response")
-    source_response = docs_response.get("source")
+    if len(context) == 0:
+        docs_response = await call_model_gemini(generic_prompt)
+    else:
+        context_str = format_context(contexts=context)
+        histories_str = get_conversation_histories(histories=conversation_history)
+        formatted_prompt = PROMPT_DOCS_QA.format(
+            message=message,
+            context=context_str,
+            language=language,
+            histories=histories_str
+        )
+        logger.info("DOCS QA PROMPT: %s", formatted_prompt)
+        docs_response = await call_model_gemini(formatted_prompt)
 
-    if qa_response in [BotDefaultMSG.NOT_RELATED_DOCUMENT, BotDefaultMSG.CANNOT_FIND_ANSWER]:
-        # TODO: call generics intent
-        qa_response = BotDefaultMSG.NO_ANSWER_MSG
+        qa_response = docs_response.get("response", "")
+        source_response = docs_response.get("source", None)
 
-    if source_response:
-        qa_response += f"\n\nReference: [{source_response}]({source_response})"
-        docs_response["response"] = qa_response
+        if source_response:
+            qa_response += f"\n\nReference: [{source_response}]({source_response})"
+            docs_response["response"] = qa_response
+
+        if qa_response in [BotDefaultMSG.NOT_RELATED_DOCUMENT, BotDefaultMSG.CANNOT_FIND_ANSWER]:
+            docs_response = await call_model_gemini(generic_prompt)
 
     return docs_response
 
@@ -102,9 +114,16 @@ def format_context(contexts):
         title = context["title"]
         content = context["content"]
         source = context["source"]
-        context_str += f"\t<title>{title}</title>\n"
-        context_str += f"\t<content>{content}</content>\n"
-        context_str += f"\t<source>{source}</source>\n"
-        context_str += "\n-----------------------\n"
+        doc_content = ""
+        doc_content += f"\t\t<title>{title}</title>\n"
+        doc_content += f"\t\t<content>{content}</content>\n"
+        doc_content += f"\t\t<source>{source}</source>\n"
+        context_str += f"\n\t<document>\n{doc_content}\t</document>\n"
 
+    context_str = remove_empty_lines(context_str)
     return context_str
+
+
+def filter_threshold(context):
+    context = [item for item in context if item.get("score") >= RetrievalCFG.SEARCH_THRESHOLD_RELEVANT]
+    return context
