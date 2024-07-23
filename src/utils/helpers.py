@@ -4,10 +4,24 @@ from datetime import datetime
 
 import fitz
 import pymupdf4llm
+import requests
+from bs4 import BeautifulSoup
+
+from src.utils.logger import logger
+
+
+def pull_url(document_link):
+    page = requests.get(document_link)
+    soup = ""
+    if page.status_code == 200:
+        soup = BeautifulSoup(page.content, 'html.parser')
+    else:
+        logger.info(f'The url {document_link} returned a status of {page.status_code}')
+    return soup
 
 
 def extract_md_from_file(document_file):
-    file_content = asyncio.run(document_file.read())
+    file_content = document_file.read()
     pdf_document = fitz.open(stream=file_content, filetype="pdf")
     md_text = pymupdf4llm.to_markdown(pdf_document)
     md_text = remove_empty_lines(md_text)

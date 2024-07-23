@@ -27,7 +27,6 @@ class IntentCFG:
 class LanguageCFG:
     EN = "en"
     VI = "vi"
-
     ENGLISH = "English"
     VIETNAMESE = "Vietnamese"
 
@@ -81,3 +80,17 @@ class BotDefaultMSG:
     NOT_RELATED_DOCUMENT = "not_related_document"
     CANNOT_FIND_ANSWER = "cannot_find_answer"
     NO_ANSWER_MSG = "I'm sorry! ArgoAI can not find answer for your question from our knowledge base."
+
+
+class TextSplitterCFG:
+    WORD_CHUNK_SIZE = 1500
+    TOKEN_CHUNK_SIZE = 600
+    HTML_HEADERS_TO_SPLIT_ON = [
+        ("h1", "h1"),
+        ("h2", "h2"),
+        ("h3", "h3"),
+        ("h4", "h4"),
+    ]
+    CHUNK_OVERLAP = 0
+    MD_HEADERS_TO_SPLIT_ON = [("#" * (i + 1), "h" + str(i + 1)) for i in range(4)]
+    SEPARATORS = ["\r\n", "\n", ".\n", ". ", " ", ""]

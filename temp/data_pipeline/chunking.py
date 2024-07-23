@@ -7,7 +7,7 @@ from langchain.text_splitter import (
     RecursiveCharacterTextSplitter,
 )
 
-from config.constant import Chunking, Status
+from constant import Chunking, Status
 import uuid
 
 
