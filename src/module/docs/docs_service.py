@@ -1,10 +1,11 @@
+import uuid
+
 from src.module.databases.zillizdb.zilliz_services import (
     retrieve_all_documents_from_zilliz,
     delete_documents_from_zilliz
 )
 from src.module.docs.docs_handler import DocsHandler
 from src.utils.logger import logger
-import uuid
 
 
 async def call_docs_handler(document_link=None, document_file=None, document_text=None, document_title=None):
