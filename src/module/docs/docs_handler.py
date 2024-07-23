@@ -4,6 +4,7 @@ import uuid
 
 import pandas as pd
 import requests
+import asyncio
 from bs4 import BeautifulSoup
 from docx import Document
 from pdfquery import PDFQuery
@@ -15,6 +16,7 @@ from src.module.llm.gemini.gemini_services import call_model_gemini
 from src.module.llm.prompts.prompt_docs_process import PROMPT_CATEGORY_DOCUMENT
 from src.utils.helpers import get_text_size
 from src.utils.logger import logger
+from src.utils.helpers import extract_md_from_file, remove_empty_lines
 
 
 async def get_document_category(document):
@@ -51,11 +53,8 @@ class DocsHandler:
             self.source = ""
             self.source_type = SourceType.TEXT
         elif self.document_file is not None:
-            if self.document_file.filename.endswith('.pdf'):
-                document = self.read_pdf()
-                self.source = self.document_file.filename
-            elif self.document_file.filename.endswith('.docx'):
-                document = self.read_docx()
+            if self.document_file.filename.endswith('.pdf') or self.document_file.filename.endswith('.docx'):
+                document = await extract_md_from_file(self.document_file)
                 self.source = self.document_file.filename
             self.source_type = SourceType.FILE
         elif self.document_link is not None:
@@ -100,26 +99,26 @@ class DocsHandler:
             insert_documents_to_zilliz(document_table)
             return document_df
 
-    def read_docx(self):
-        file = io.BytesIO(self.document_file.file.read())
-        doc = Document(file)
-        full_text = []
-        for para in doc.paragraphs:
-            full_text.append(para.text)
-        paragraph = ' '.join(full_text)
+    # def read_docx(self):
+    #     file = io.BytesIO(self.document_file.file.read())
+    #     doc = Document(file)
+    #     full_text = []
+    #     for para in doc.paragraphs:
+    #         full_text.append(para.text)
+    #     paragraph = ' '.join(full_text)
+    #
+    #     return paragraph
 
-        return paragraph
-
-    def read_pdf(self):
-        file = io.BytesIO(self.document_file.file.read())
-        pdf = PDFQuery(file)
-        pdf.load()
-
-        text_elements = pdf.pq('LTTextLineHorizontal')
-        text = [t.text for t in text_elements]
-        paragraph = ' '.join(text)
-
-        return paragraph
+    # def read_pdf(self):
+    #     file = io.BytesIO(self.document_file.file.read())
+    #     pdf = PDFQuery(file)
+    #     pdf.load()
+    #
+    #     text_elements = pdf.pq('LTTextLineHorizontal')
+    #     text = [t.text for t in text_elements]
+    #     paragraph = ' '.join(text)
+    #
+    #     return paragraph
 
     def pull_url(self):
         page = requests.get(self.document_link)

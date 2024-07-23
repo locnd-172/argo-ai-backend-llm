@@ -6,8 +6,8 @@ import fitz
 import pymupdf4llm
 
 
-def extract_md_from_file(document_file):
-    file_content = asyncio.run(document_file.read())
+async def extract_md_from_file(document_file):
+    file_content = await document_file.read()
     pdf_document = fitz.open(stream=file_content, filetype="pdf")
     md_text = pymupdf4llm.to_markdown(pdf_document)
     md_text = remove_empty_lines(md_text)
