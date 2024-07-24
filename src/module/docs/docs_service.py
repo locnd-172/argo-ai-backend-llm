@@ -1,5 +1,7 @@
 import uuid
 
+from src.models.search_model import SearchHybridModel
+from src.module.chat_response.intent_handler.docs_qa_intent.docs_retrieval import call_search_vector_hybrid
 from src.module.databases.zillizdb.zilliz_services import (
     retrieve_all_documents_from_zilliz,
     delete_documents_from_zilliz
@@ -30,7 +32,7 @@ async def get_all_docs(collection_name):
         title = record.get("title")
         if title not in document_titles:
             document_titles.append(title)
-            document = {key: value for key, value in record.items() if key not in ["id"]}
+            document = {key: value for key, value in record.items() if key not in ["id", "content"]}
             documents.append(document)
 
     logger.info("records length: %s", len(records))
@@ -47,3 +49,13 @@ async def delete_docs_by_id(data):
     if not delete_result:
         raise Exception("Fail to delete document by id %s" % document_ids)
     return {"result": delete_result, "message": "Deleted successfully"}
+
+
+async def vector_search_docs(data):
+    search_input = SearchHybridModel(
+        search=data.query,
+        index=data.index,
+        top=data.top_k,
+    )
+    response_search = call_search_vector_hybrid(inputs=search_input)
+    return response_search

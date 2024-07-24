@@ -57,6 +57,7 @@ class ZillizClient:
                         "source_type",
                         "source_size",
                         "created_at",
+                        "content"
                     ]
                 )
                 if not documents:

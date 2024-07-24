@@ -2,8 +2,8 @@ import traceback
 
 from fastapi import APIRouter, UploadFile, File
 
-from src.models.docs_model import UploadLinkModel, UploadTextModel, DeleteDocumentModel
-from src.module.docs.docs_service import call_docs_handler, get_all_docs, delete_docs_by_id
+from src.models.docs_model import UploadLinkModel, UploadTextModel, DeleteDocumentModel, SearchDocumentModel
+from src.module.docs.docs_service import call_docs_handler, get_all_docs, delete_docs_by_id, vector_search_docs
 from src.utils.logger import logger
 
 router = APIRouter(prefix="/api/v1/docs", tags=["docs"])
@@ -69,3 +69,15 @@ async def delete_docs_by_id_api(data: DeleteDocumentModel):
     except Exception as err:
         logger.error("[X] Exception in delete docs by id: %s, %s", err, traceback.format_exc())
         return {"result": False, "message": "Deleted Failed!"}
+
+
+@router.post(path="/vectorSearch", description="Search relevant document")
+async def vector_search_documents_api(inputs: SearchDocumentModel):
+    logger.info("------------------ API - Search relevant documents")
+    logger.info(f"SEARCH INPUT: %s", inputs)
+    try:
+        response = await vector_search_docs(inputs)
+        return response
+    except Exception as err:
+        logger.error("[X] Exception in searching docs: %s, %s", err, traceback.format_exc())
+        return {"response": "Unknown error"}
