@@ -23,7 +23,8 @@ class FirestoreWrapper:
             self,
             collection_name: str,
             document_id: str = None,
-            query_filters: List[tuple] = None
+            query_filters: List[tuple] = None,
+            order_by: str = None
     ):
         collection_ref = self.db.collection(collection_name)
 
@@ -35,6 +36,9 @@ class FirestoreWrapper:
         if query_filters:
             for field, operator, value in query_filters:
                 collection_ref = collection_ref.where(filter=FieldFilter(field, operator, value))
+
+        if order_by:
+            collection_ref.order_by(order_by, ascending=False).limit(1)
 
         docs = collection_ref.stream()
         return [{"id": doc.id, **doc.to_dict()} for doc in docs]

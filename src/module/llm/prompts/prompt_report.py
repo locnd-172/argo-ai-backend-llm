@@ -17,10 +17,11 @@ The user message is {message}.
 """
 
 PROMPT_CALL_FUNCTION_GET_REPORT_INFO = """
-Analyze user message and extract information: facility, plant, date, metrics.
+Analyze user message and extract information: facility, date.
 These are input filter to query data from firestore. 
-Metrics are list of followings: soil, weather, irrigation, pest.
-if no operator of filter is specified, return default `==` operator.
+Metrics are from this list: `irrigation`, `weather`, `pest`, `soil`. Return default `DEF_VALUE` if metrics is not specified.
+Current year is {current_date}. Return default `DEF_VALUE` if report date is not specified.
+
 User message is: {user_message}
 """
 
@@ -31,9 +32,11 @@ Your task is to understand the reporting metrics related to agricultural farming
 
 # Instruction
 Your reports should be concise, easy to understand, and include evaluative commentary on the current data.
-
+Report must for following {metrics} only.
+If 'facility' is missing from report data, ask user to provide data for the respective information.
+ 
 # Context
-The current report is as follows:
+The current report data is as follows:
 ```
 {report_data}.
 ```
@@ -44,6 +47,3 @@ You must respond in the following structured JSON format, all fields are mandato
     "follow_up": "List of 2 follow-up questions that the user may ask about your answer. Use first person."
 }}
 """
-# The current facility is {facility}.
-# The plant is {plant}.
-# The time period is {period}.

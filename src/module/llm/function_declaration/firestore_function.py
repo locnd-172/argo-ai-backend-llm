@@ -1,32 +1,22 @@
 firestore_function_declaration = {
-    "name": "get_firestore_data",
-    "description": "Retrieves data from Firestore 'mrv_system' collection based on provided filters.",
+    "name": "get_report_data",
+    "description": "Retrieves report data of a farm from Firestore 'mrv_system' collection based on provided input data.",
     "parameters": {
         "type": "object",
         "properties": {
-            "filters": {
-                "type": "array",
-                "description": "A list of filters (field, operator, value) to apply to the query. The filter fields are 'facility', 'date', 'plant', 'metrics'.",
-                "items": {
-                    "type": "object",
-                    "description": "A dictionary of filters (field, operator, value) to indicate a filter to be applied to the query.",
-                    "properties": {
-                        "field": {
-                            "type": "string",
-                            "description": "field name of filter item"
-                        },
-                        "operator": {
-                            "type": "string",
-                            "description": "operator of filter item, one of following: `==`, `>=`, `<=`. Default operator is `==`"
-                        },
-                        "value": {
-                            "type": "string",
-                            "description": "value of filter item"
-                        }
-                    }
-                }
+            "facility": {
+                "type": "string",
+                "description": "Farm name or field name that user is inquiring for report. Return default `DEF_VALUE` if not mentioned",
+            },
+            "date": {
+                "type": "string",
+                "description": "Report date in dd/MM/yyyy format. Return default `DEF_VALUE` if not mentioned",
+            },
+            "metrics": {
+                "type": "string",
+                "description": "Metrics field to retrieve data for, some of following: `irrigation`, `weather`, `pest`, `soil`. Return default `DEF_VALUE` if not mentioned"
             }
         },
-        "required": ["filters"]
+        "required": ["facility", "date"]
     }
 }

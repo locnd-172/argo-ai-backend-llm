@@ -40,6 +40,12 @@ def get_text_size(text, encoding='utf-8'):
     return size_in_megabytes
 
 
+def get_current_year():
+    now = datetime.now()
+    formatted_time = now.strftime("%Y")
+    return formatted_time
+
+
 def get_current_date():
     now = datetime.now()
     formatted_time = now.strftime("%d/%m/%Y")
