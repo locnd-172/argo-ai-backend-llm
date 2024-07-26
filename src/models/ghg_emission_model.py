@@ -16,8 +16,6 @@ class EmissionFacility(BaseModel):
 
 
 class OrganicAmendment(BaseModel):
-    # type: str = Field(..., description="organic amendment")
-    # value: int = Field(..., description="organic amendment value")
     straw_incorporated_short_value: float = Field(..., description="straw incorporated short value")
     straw_incorporated_long_value: float = Field(..., description="straw incorporated long value")
     compost_value: float = Field(..., description="compost value")
@@ -37,17 +35,12 @@ class Irrigation(BaseModel):
 
 
 class CropProtection(BaseModel):
-    # type: str = Field(..., description="crop protection type")
-    # value: int = Field(..., description="crop protection value")
     pesticide_value: float = Field(..., description="pesticide value")
     herbicide_value: float = Field(..., description="herbicide value")
     fungicide_value: float = Field(..., description="fungicide value")
     insecticide_value: float = Field(..., description="insecticide value")
 
 
-# class CropResidue(BaseModel):
-#     # type: str = Field(..., description="crop residue type")
-#     # value: int = Field(..., description="crop residue value")
 class LandManagement(BaseModel):
     fertilizer_value: int = Field(..., description="fertilizer value")
     animal_manure_value: int = Field(..., description="animal manure value")

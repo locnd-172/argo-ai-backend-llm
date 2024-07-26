@@ -18,6 +18,12 @@ Document is below:
 {context}
 </documents>
 
+<feedbacks>
+<question>
+<answer>
+<feedback_content>
+</feedback>
+
 <conversation_history>
 {histories}
 <conversation_history/>

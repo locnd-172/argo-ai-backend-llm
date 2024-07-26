@@ -35,6 +35,7 @@ class FirebaseCFG:
     FS_CERTIFICATE_PATH = "src/config/argoai-63051-firebase-adminsdk-ykwbi-a14bbb8c68.json"
     FS_COLLECTION_EMISSION_FACTORS = "emission_factors"
     FS_COLLECTION_MRV = "mrv_system"
+    FS_COLLECTION_CONVERSATION = "conversations"
 
 
 class ZillizCFG:
@@ -91,6 +92,6 @@ class TextSplitterCFG:
         ("h3", "h3"),
         ("h4", "h4"),
     ]
-    CHUNK_OVERLAP = 0
+    CHUNK_OVERLAP = 20
     MD_HEADERS_TO_SPLIT_ON = [("#" * (i + 1), "h" + str(i + 1)) for i in range(4)]
     SEPARATORS = ["\r\n", "\n", ".\n", ". ", " ", ""]

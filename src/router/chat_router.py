@@ -5,6 +5,7 @@ from fastapi import APIRouter, File, Form, UploadFile
 
 from src.models.chat_model import ChatModel
 from src.module.chat_response.generate_answer import generate_chat_response
+from src.module.chat_response.store_message import save_conversation
 from src.utils import cache_history_service
 from src.utils.logger import logger
 
@@ -14,6 +15,8 @@ router = APIRouter(prefix="/api/v1/chat", tags=["chat"])
 @router.post(path="/generateAnswer")
 async def generate_chat_response_api(
         session_id: str = Form("1"),
+        sender_id: str = Form("1"),
+        sender_name: str = Form("anonymous"),
         sender_message: str = Form(""),
         file: Optional[UploadFile] = File(None)
 ) -> Dict[str, Any]:
@@ -23,8 +26,15 @@ async def generate_chat_response_api(
     try:
         histories = cache_history_service.read_cache_by_session_id(session_id)
 
-        data = ChatModel(session_id=session_id, sender_message=sender_message)
+        data = ChatModel(
+            session_id=session_id,
+            sender_id=sender_id,
+            sender_name=sender_name,
+            sender_message=sender_message
+        )
         response = await generate_chat_response(data, file, histories)
+
+        await save_conversation(input_data=data, output_data=response)
 
         cache_history_service.write_cache(
             session_id=session_id,

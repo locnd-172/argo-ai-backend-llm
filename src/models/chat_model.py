@@ -5,6 +5,8 @@ from pydantic import BaseModel, Field
 
 class ChatModel(BaseModel):
     session_id: str = Field(..., description="Session ID of user")
+    sender_id: str = Field(..., description="User ID")
+    sender_name: str = Field(..., description="User name")
     sender_message: str = Field(..., description="Question of user")
 
 
