@@ -6,7 +6,7 @@ from fastapi import APIRouter, File, Form, UploadFile
 from src.models.chat_model import ChatModel, HumanFeedbackModel
 from src.module.chat_response.generate_answer import generate_chat_response
 from src.module.chat_response.store_message import save_conversation
-from src.module.save_human_feedback import save_human_feedback
+from src.module.chat_response.save_human_feedback import save_human_feedback
 from src.utils import cache_history_service
 from src.utils.logger import logger
 

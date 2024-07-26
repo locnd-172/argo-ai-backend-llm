@@ -12,7 +12,8 @@ async def save_conversation(input_data, output_data):
         "sender_id": input_data.sender_id,
         "sender_name": input_data.sender_name,
         "sender_message": input_data.sender_message,
-        "response_message": output_data.get("response", "")
+        "response_message": output_data.get("response", ""),
+        "intent": output_data.get("intent", "generic")
     }
     firestore = FirestoreWrapper()
     insert_result = await firestore.insert_data(

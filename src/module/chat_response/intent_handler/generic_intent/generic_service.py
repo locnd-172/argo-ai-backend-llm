@@ -9,7 +9,9 @@ async def get_generic_response(chat_request):
     formatted_prompt = PROMPT_GENERIC.format(
         message=data.sender_message,
         language=chat_request.language,
-        now=get_current_datetime()
+        now=get_current_datetime(),
+        feedback_guide="",
+        feedbacks=""
     )
     logger.info("GENERIC PROMPT: %s", formatted_prompt)
     generic_response = await call_model_gemini(formatted_prompt)
