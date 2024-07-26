@@ -32,7 +32,7 @@ class LanguageCFG:
 
 
 class FirebaseCFG:
-    FS_CERTIFICATE_PATH = "src/config/argoai-63051-firebase-adminsdk-ykwbi-a14bbb8c68.json"
+    FS_CERTIFICATE_PATH = os.environ["FS_CERTIFICATE_PATH"]
     FS_COLLECTION_EMISSION_FACTORS = "emission_factors"
     FS_COLLECTION_MRV = "mrv_system"
     FS_COLLECTION_CONVERSATION = "conversations"

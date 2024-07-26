@@ -13,7 +13,11 @@ from src.models.ghg_emission_model import (
     OrganicAmendment,
     EmissionFacility
 )
-from src.module.ghg_emission.ghg_emission_services import process_ghg_emission, calculate_ghg_emission
+from src.module.ghg_emission.ghg_emission_services import (
+    process_ghg_emission,
+    calculate_ghg_emission,
+    extract_emission_data
+)
 from src.utils.logger import logger
 
 router = APIRouter(prefix="/api/v1/emission", tags=["emission"])
@@ -47,11 +51,24 @@ def calculate_emission_api(
         emission_result = GHGEmissionModel(
             facility=facility.facility_name,
             plant=facility.plant,
-            period="",
+            period_start=facility.period_start,
+            period_end=facility.period_end,
             emission_data=emission_data
         )
         emission_evaluation = asyncio.run(process_ghg_emission(emission_result))
         return {"emission_evaluation": emission_evaluation, "emission_result": emission_result}
     except Exception as err:
         logger.error("[X] Exception in calculate emission data: %s, %s", err, traceback.format_exc())
+        return {"response": "An error occurred while processing your request."}
+
+
+@router.post(path="/extractEmissionData")
+async def extract_emission_data_api(data: GHGEmissionModel) -> Dict[str, Any]:
+    logger.info("------------------ API - Extract emission data")
+    logger.info("EMISSION FACILITY: %s", data)
+    try:
+        response = await extract_emission_data(data)
+        return response
+    except Exception as err:
+        logger.error("[X] Exception in extract emission data: %s, %s", err, traceback.format_exc())
         return {"response": "An error occurred while processing your request."}
