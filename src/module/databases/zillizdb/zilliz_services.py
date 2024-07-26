@@ -18,11 +18,15 @@ def insert_documents_to_zilliz(documents):
         return False
 
 
-def retrieve_documents_from_zilliz(index, query, top_k):
+def retrieve_documents_from_zilliz(index, query, top_k, output_fields):
     logger.info("SEARCH QUERY: %s", query)
 
     zilliz = ZillizClient(collection_name=index)
-    search_results = zilliz.vector_search(query=query, limit_num=top_k)
+    search_results = zilliz.vector_search(
+        query=query,
+        limit_num=top_k,
+        output_fields=output_fields
+    )
     search_results = search_results[0]
     extracted_search_results = [{**item["entity"], "score": item["distance"]} for item in search_results]
     logger.info(

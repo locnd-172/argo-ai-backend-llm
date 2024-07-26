@@ -69,7 +69,7 @@ class ZillizClient:
                 break
         return all_documents
 
-    def vector_search(self, query, limit_num=16):
+    def vector_search(self, query, limit_num=16, output_fields=[]):
         embedding = GeminiEmbeddingModel()
         query_emb = embedding.get_embedding(query, task_type="retrieval_query")
         query_emb = query_emb.get("embedding")
@@ -81,7 +81,7 @@ class ZillizClient:
                 "metric_type": "COSINE",
                 "params": {}
             },
-            output_fields=["id", "title", "content", "source"],
+            output_fields=output_fields,
         )
         return results
 

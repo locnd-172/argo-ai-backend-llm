@@ -1,4 +1,4 @@
-from src.config.constant import ZillizCFG, RetrievalCFG, BotDefaultMSG
+from src.config.constant import ZillizCFG, RetrievalCFG, BotDefaultMSG, PROMPT_GUIDE_FEEDBACK
 from src.models.search_model import SearchHybridModel
 from src.module.chat_response.intent_handler.docs_qa_intent.docs_helpers import get_conversation_histories
 from src.module.chat_response.intent_handler.docs_qa_intent.docs_retrieval import call_search_vector_hybrid
@@ -53,13 +53,23 @@ async def get_docs_qa_response(chat_request):
         search=chat_request.standalone_query,
         index=RetrievalCFG.SEARCH_INDEX,
         top=RetrievalCFG.SEARCH_TOP_K,
+        output_fields=["id", "title", "content", "source"]
     )
     response_search = call_search_vector_hybrid(inputs=search_input)
+
+    search_feedback_input = SearchHybridModel(
+        search=chat_request.data.sender_message,
+        index=RetrievalCFG.SEARCH_INDEX_FEEDBACK,
+        top=RetrievalCFG.SEARCH_TOP_K_FEEDBACK,
+        output_fields=["id", "query", "answer", "feedback"]
+    )
+    response_search_feedback = call_search_vector_hybrid(inputs=search_feedback_input)
     response_docs_qa: dict = await call_completion_qa(
         message=data.sender_message,
         language=chat_request.language,
         conversation_history=chat_request.histories,
         context=response_search,
+        feedbacks=response_search_feedback
     )
     logger.info("DOCS QA ANSWER: %s", response_docs_qa)
     return response_docs_qa
@@ -70,18 +80,23 @@ async def call_completion_qa(
         language,
         conversation_history,
         context,
+        feedbacks
 ):
     logger.info("LENGTH CONTEXT: %s", len(context))
     context = filter_threshold(context)
     logger.info("LENGTH FILTER CONTEXT: %s", len(context))
     docs_response = {}
+    feedbacks_str = format_feedbacks(feedbacks)
     generic_prompt = PROMPT_GENERIC.format(
         message=message,
         language=language,
-        now=get_current_datetime()
+        now=get_current_datetime(),
+        feedback_guide=PROMPT_GUIDE_FEEDBACK if feedbacks else "",
+        feedbacks=feedbacks_str
     )
 
     if len(context) == 0:
+        logger.info("GENERIC PROMPT: %s", generic_prompt)
         docs_response = await call_model_gemini(generic_prompt)
     else:
         context_str = format_context(contexts=context)
@@ -90,7 +105,9 @@ async def call_completion_qa(
             message=message,
             context=context_str,
             language=language,
-            histories=histories_str
+            histories=histories_str,
+            feedback_guide=PROMPT_GUIDE_FEEDBACK if feedbacks else "",
+            feedbacks=feedbacks_str
         )
         logger.info("DOCS QA PROMPT: %s", formatted_prompt)
         docs_response = await call_model_gemini(formatted_prompt)
@@ -103,6 +120,7 @@ async def call_completion_qa(
             docs_response["response"] = qa_response
 
         if qa_response in [BotDefaultMSG.NOT_RELATED_DOCUMENT, BotDefaultMSG.CANNOT_FIND_ANSWER]:
+            logger.info("GENERIC PROMPT: %s", generic_prompt)
             docs_response = await call_model_gemini(generic_prompt)
 
     return docs_response
@@ -127,3 +145,26 @@ def format_context(contexts):
 def filter_threshold(context):
     context = [item for item in context if item.get("score") >= RetrievalCFG.SEARCH_THRESHOLD_RELEVANT]
     return context
+
+
+def format_feedbacks(feedbacks):
+    feedbacks_str = ""
+    for feedback in feedbacks:
+        query = feedback["query"]
+        answer = feedback["answer"]
+        feedback_text = feedback["feedback"]
+        feedback_content = ""
+        feedback_content += f"\t\t<query>{query}</query>\n"
+        feedback_content += f"\t\t<feedback_score>{feedback_text}/5</feedback_score>\n"
+        feedback_content += f"\t\t<answer>{answer}</answer>\n"
+        feedbacks_str += f"\n\t<feedback>\n{feedback_content}\t</feedback>\n"
+
+    feedbacks_str = remove_empty_lines(feedbacks_str)
+    feedbacks_str = f"<feedbacks>\n\t{feedbacks_str}\n</feedbacks>"
+    feedbacks_str = f"# Feedback from human:\n{feedbacks_str}"
+    return feedbacks_str
+
+
+def filter_feedback(feedbacks):
+    feedbacks = [item for item in feedbacks if item.get("score") >= RetrievalCFG.SEARCH_THRESHOLD_RELEVANT_FEEDBACK]
+    return feedbacks

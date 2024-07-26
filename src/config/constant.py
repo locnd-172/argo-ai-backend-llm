@@ -60,6 +60,10 @@ class RetrievalCFG:
     SEARCH_TOP_K = os.environ["SEARCH_TOP_K"]
     SEARCH_THRESHOLD_RELEVANT = float(os.environ["SEARCH_THRESHOLD_RELEVANT"])
 
+    SEARCH_INDEX_FEEDBACK = os.environ["SEARCH_INDEX_FEEDBACK"]
+    SEARCH_TOP_K_FEEDBACK = os.environ["SEARCH_TOP_K_FEEDBACK"]
+    SEARCH_THRESHOLD_RELEVANT_FEEDBACK = float(os.environ["SEARCH_THRESHOLD_RELEVANT_FEEDBACK"])
+
 
 class EmissionCFG:
     CH4_CONVERSION_VALUE = 25
@@ -96,3 +100,8 @@ class TextSplitterCFG:
     CHUNK_OVERLAP = 20
     MD_HEADERS_TO_SPLIT_ON = [("#" * (i + 1), "h" + str(i + 1)) for i in range(4)]
     SEPARATORS = ["\r\n", "\n", ".\n", ". ", " ", ""]
+
+
+PROMPT_GUIDE_FEEDBACK = """There may be some feedbacks. A feedback contains question, answer and feedback_content. 
+You should follow answers with high score feedback_content like 4/5 or 5/5, and avoid bad feedback_content ones like 0/5 or 1/5. 
+You should put the feedbacks on a higher priority than given documents."""

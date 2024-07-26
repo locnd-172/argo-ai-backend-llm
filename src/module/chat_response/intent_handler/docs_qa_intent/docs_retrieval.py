@@ -8,7 +8,8 @@ def call_search_vector_hybrid(inputs):
         search_result = retrieve_documents_from_zilliz(
             index=inputs.index,
             query=inputs.search,
-            top_k=inputs.top
+            top_k=inputs.top,
+            output_fields=inputs.output_fields
         )
     except Exception as e:
         logger.error(f"ERROR HYBRID SEARCH: {e}")
