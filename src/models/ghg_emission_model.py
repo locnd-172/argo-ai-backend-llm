@@ -1,4 +1,4 @@
-from typing import Dict, Any, List, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -25,7 +25,6 @@ class OrganicAmendment(BaseModel):
 
 class Irrigation(BaseModel):
     days_flooded: int = Field(..., description="days flooded")
-    # irrigation_type: str = Field(..., description="irrigation type")
     is_continuous_flooding: bool = Field(False, description="is continuous flooding")
     is_single_aeration: bool = Field(False, description="is single aeration")
     is_multiple_aeration: bool = Field(False, description="is multiple aeration")

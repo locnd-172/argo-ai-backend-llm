@@ -17,3 +17,8 @@ class GenerationRequest:
     histories: list
     language: str
     standalone_query: str
+
+
+class HumanFeedbackModel(ChatModel):
+    response_message: str = Field(..., description="Bot response message")
+    human_feedback: str = Field(..., description="Human feedback")
