@@ -1,12 +1,17 @@
+import json
 from typing import Dict, Any, List
 
 import firebase_admin
+import requests
 from firebase_admin import credentials, firestore
 from google.cloud.firestore_v1 import FieldFilter
+from google.cloud.firestore_v1.base_query import BaseQuery
 
 from src.config.constant import FirebaseCFG
 
-cred = credentials.Certificate(FirebaseCFG.FS_CERTIFICATE_PATH)
+response = requests.get(FirebaseCFG.FS_CERTIFICATE_PATH)
+cert = json.loads(response.text)
+cred = credentials.Certificate(cert)
 firebase_admin.initialize_app(cred)
 
 
@@ -24,7 +29,8 @@ class FirestoreWrapper:
             collection_name: str,
             document_id: str = None,
             query_filters: List[tuple] = None,
-            order_by: str = None
+            order_by: str = None,
+            limit: int = None
     ):
         collection_ref = self.db.collection(collection_name)
 
@@ -38,7 +44,10 @@ class FirestoreWrapper:
                 collection_ref = collection_ref.where(filter=FieldFilter(field, operator, value))
 
         if order_by:
-            collection_ref.order_by(order_by, ascending=False).limit(1)
+            collection_ref.order_by(order_by, direction=BaseQuery.DESCENDING)
+
+        if limit:
+            collection_ref.limit(limit)
 
         docs = collection_ref.stream()
         return [{"id": doc.id, **doc.to_dict()} for doc in docs]

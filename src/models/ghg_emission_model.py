@@ -6,7 +6,8 @@ from pydantic import BaseModel, Field
 class GHGEmissionModel(BaseModel):
     facility: str = Field(..., description="emission facility")
     plant: str = Field(..., description="emission plant")
-    period: str = Field(..., description="emission period")
+    period_start: str = Field(..., description="emission period start")
+    period_end: str = Field(..., description="emission period end")
     emission_data: Any = Field(..., description="emission data")
 
 
