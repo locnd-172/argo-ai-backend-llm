@@ -85,6 +85,10 @@ async def call_completion_qa(
     logger.info("LENGTH CONTEXT: %s", len(context))
     context = filter_threshold(context)
     logger.info("LENGTH FILTER CONTEXT: %s", len(context))
+
+    logger.info("LENGTH FEEDBACKS: %s", len(feedbacks))
+    feedbacks = filter_feedback(feedbacks)
+    logger.info("LENGTH FILTER FEEDBACK: %s", len(feedbacks))
     docs_response = {}
     feedbacks_str = format_feedbacks(feedbacks)
     generic_prompt = PROMPT_GENERIC.format(

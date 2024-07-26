@@ -45,6 +45,7 @@ async def generate_chat_response(data, file, histories):
         chat_response = await response_func(chat_request)
 
     chat_response["intent"] = intent
+    chat_response["message_id"] = data.message_id
     logger.info("CHAT RESPONSE: %s", json.dumps(chat_response, indent=4, ensure_ascii=False))
     return chat_response
 

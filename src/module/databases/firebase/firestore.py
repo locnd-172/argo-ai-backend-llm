@@ -14,9 +14,9 @@ class FirestoreWrapper:
     def __init__(self):
         self.db = firestore.client()
 
-    async def insert_data(self, collection_name: str, data: Dict[str, Any]) -> str:
-        doc_ref = self.db.collection(collection_name).document()
-        doc_ref.set(data)
+    async def insert_data(self, collection_name: str, data: Dict[str, Any], document_id=None) -> str:
+        doc_ref = self.db.collection(collection_name).document(document_id)
+        doc_ref.set(data, merge=True)
         return doc_ref.id
 
     async def retrieve_data(

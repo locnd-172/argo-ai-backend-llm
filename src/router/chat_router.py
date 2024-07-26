@@ -1,4 +1,5 @@
 import traceback
+import uuid
 from typing import Any, Dict, Optional
 
 from fastapi import APIRouter, File, Form, UploadFile
@@ -15,6 +16,7 @@ router = APIRouter(prefix="/api/v1/chat", tags=["chat"])
 
 @router.post(path="/generateAnswer")
 async def generate_chat_response_api(
+        message_id: str = Form(str(uuid.uuid4())),
         session_id: str = Form("1"),
         sender_id: str = Form("1"),
         sender_name: str = Form("anonymous"),
@@ -28,6 +30,7 @@ async def generate_chat_response_api(
         histories = cache_history_service.read_cache_by_session_id(session_id)
 
         data = ChatModel(
+            message_id=message_id,
             session_id=session_id,
             sender_id=sender_id,
             sender_name=sender_name,
