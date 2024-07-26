@@ -22,6 +22,9 @@ async def generate_chat_response(data, file, histories):
     language = intent_info.get(IntentCFG.LANGUAGE, LanguageCFG.EN)
     standalone_query = intent_info.get(IntentCFG.STANDALONE_QUERY, data.sender_message)
 
+    if file is not None:
+        intent = IntentCFG.DIAGNOSE
+
     chat_request = GenerationRequest(
         data=data,
         file=file,
