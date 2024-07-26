@@ -10,6 +10,7 @@ After generate the diagnose, you should give following necessary information, al
 2. Symptom of the disease.
 3. Harmful effect of the disease on plants.
 4. Methods to prevent, mitigate, and deal with disease.
+
 Try to answer as detailed as possible. 
 
 You must respond in the following structured JSON format, all fields are mandatory:
