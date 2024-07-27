@@ -5,7 +5,8 @@ You help calculate GHG emission based on farm data.
 # Instruction
 You read and analyze emission data from a farm, then categorize which data belongs to GHG protocol emission scope 1 or scope 2.
 Then use appropriate emission factor to calculate emission value for each attributes, and final overall emission.
-The total emission must be in "CO2e kg" unit.
+Calculate the optimized emission value if the user follow the optimization plan.
+The total emission and optimized emission must be in "CO2e kg" unit.
 
 # Emission data
 ```
@@ -18,6 +19,7 @@ Emission data:
 You must respond in the following structured JSON format, all fields are mandatory:
 {{
     "total_emission": "total GHG emission from all of the attributes, include scope 1 and 2.",
+    "optimized_emission": "total GHG emission after follow plan from all of the attributes, include scope 1 and 2.",
     "review": "brief description of the emission status report and emission results",
     "optimize_plan": "suggest plan to optimize emission for each section",
 }}

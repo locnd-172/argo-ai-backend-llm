@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 
 
 class GHGEmissionModel(BaseModel):
-    facility: str = Field(..., description="emission facility")
+    facility_name: str = Field(..., description="emission facility")
     plant: str = Field(..., description="emission plant")
     period_start: str = Field(..., description="emission period start")
     period_end: str = Field(..., description="emission period end")
@@ -14,6 +14,8 @@ class GHGEmissionModel(BaseModel):
 class EmissionFacility(BaseModel):
     facility_name: str = Field(..., description="emission facility name")
     plant: str = Field(..., description="emission plant")
+    period_start: str = Field(..., description="emission period start")
+    period_end: str = Field(..., description="emission period end")
 
 
 class OrganicAmendment(BaseModel):
