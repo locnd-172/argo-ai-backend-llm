@@ -40,12 +40,12 @@ def aggregate_chat_statistic(conversations):
 async def analyze_chat_statistic(total_conversations, intent_counts, qna_intent_counts):
     formatted_prompt = PROMPT_QNA_ANALYTIC.format(
         total_conversations=total_conversations,
-        qna=intent_counts['qna'],
-        generic=intent_counts['generic'],
-        agricultural_standards=qna_intent_counts['agricultural_standards'],
-        cultivation_techniques=qna_intent_counts['cultivation_techniques'],
-        other=qna_intent_counts['other'],
-        general_agriculture=qna_intent_counts['general_agriculture']
+        qna=intent_counts.get('qna', ''),
+        generic=intent_counts.get('generic', ''),
+        agricultural_standards=qna_intent_counts.get('agricultural_standards', ''),
+        cultivation_techniques=qna_intent_counts.get('cultivation_techniques', ''),
+        other=qna_intent_counts.get('other', ''),
+        general_agriculture=qna_intent_counts.get('general_agriculture', '')
     )
     logger.info("ANALYTIC QNA EMISSION: {}".format(formatted_prompt))
 
