@@ -49,7 +49,7 @@ def calculate_emission_api(
         emission_data = calculate_ghg_emission(irrigation, organic_amendment, land_management, crop_protection, energy)
 
         emission_result = GHGEmissionModel(
-            facility=facility.facility_name,
+            facility_name=facility.facility_name,
             plant=facility.plant,
             period_start=facility.period_start,
             period_end=facility.period_end,
