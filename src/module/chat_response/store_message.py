@@ -16,6 +16,7 @@ async def save_conversation(input_data, output_data):
         "sender_message": input_data.sender_message,
         "response_message": output_data.get("response", ""),
         "intent": output_data.get("intent", "generic"),
+        "qna_intent": output_data.get("qna_intent", None),
         "feedback": ""
     }
     logger.info("SAVING CONVERSATION: %s", conversation)

@@ -54,5 +54,5 @@ def get_current_date():
 
 def get_current_datetime():
     now = datetime.now()
-    formatted_time = now.strftime("%d/%m/%Y %H:%M:%S")
+    formatted_time = now.strftime("%A, %d/%m/%Y %H:%M:%S")
     return formatted_time

@@ -5,6 +5,7 @@ from typing import Any, Dict, Optional
 from fastapi import APIRouter, File, Form, UploadFile
 
 from src.models.chat_model import ChatModel, HumanFeedbackModel
+from src.module.chat_response.chat_statistic import get_chat_statistic
 from src.module.chat_response.generate_answer import generate_chat_response
 from src.module.chat_response.store_message import save_conversation
 from src.module.chat_response.save_human_feedback import save_human_feedback
@@ -59,6 +60,17 @@ async def save_human_feedbacks_api(
     logger.info("FEEDBACK INPUT: %s", data)
     try:
         response = await save_human_feedback(data)
+        return response
+    except Exception as err:
+        logger.error("[X] Exception in generate answer: %s, %s", err, traceback.format_exc())
+        return {"response": "An error occurred while processing your request."}
+
+
+@router.get(path="/statistics")
+async def get_chat_statistic_api() -> Dict[str, Any]:
+    logger.info("------------------ API - Get conversation statistics")
+    try:
+        response = await get_chat_statistic()
         return response
     except Exception as err:
         logger.error("[X] Exception in generate answer: %s, %s", err, traceback.format_exc())

@@ -33,5 +33,9 @@ intent: generics
 user: who are you
 intent: generics
 ```
+```
+user: who date is it today?
+intent: generics
+```
 The user message is {message}.
 """

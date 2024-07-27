@@ -10,36 +10,8 @@ from src.module.llm.prompts.prompt_report import (
     PROMPT_EXTRACT_REPORT_INFO,
     PROMPT_REPORT, PROMPT_CALL_FUNCTION_GET_REPORT_INFO
 )
-from src.utils.helpers import get_current_date, get_current_year
+from src.utils.helpers import get_current_year
 from src.utils.logger import logger
-
-
-async def query_report_data(inputs):
-    current_date = str(get_current_date())
-    logger.info("CURRENT DATE: %s", current_date)
-    date_str = inputs.get("period", current_date)
-    date_object = datetime.strptime(date_str, "%d/%m/%Y")
-    date = date_object.strftime("%d/%m/%Y")
-    logger.info("REPORT DATE: %s", date)
-
-    input_metrics = inputs.get('metrics', "soil, water, weather")
-    metrics = []
-    if "soil" in input_metrics.lower():
-        metrics.extend(["soil_moisture", "soil_temperature", "soil_pH", "soil_conductivity"])
-    if "water" in input_metrics.lower():
-        metrics.extend(["water_consumed", "water_recycled", "water_quality"])
-    if "weather" in input_metrics.lower():
-        metrics.extend(["max_temperature", "min_temperature", "wind", "wind_direction", "humidity", "cloud",
-                        "atmospheric_pressure"])
-
-    firestore = FirestoreWrapper()
-    mrv_data = await firestore.retrieve_data(
-        collection_name=FirebaseCFG.FS_COLLECTION_MRV,
-        query_filters=[("date", "=", date)]
-    )
-
-    logger.info("REPORT DATA: %s", mrv_data)
-    return mrv_data
 
 
 async def gen_report_answer(report_data, language, metrics):

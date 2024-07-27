@@ -1,4 +1,4 @@
-from src.config.constant import ZillizCFG, RetrievalCFG, BotDefaultMSG, PROMPT_GUIDE_FEEDBACK
+from src.config.constant import ZillizCFG, RetrievalCFG, BotDefaultMSG, PROMPT_GUIDE_FEEDBACK, QADocsCFG
 from src.models.search_model import SearchHybridModel
 from src.module.chat_response.intent_handler.docs_qa_intent.docs_helpers import get_conversation_histories
 from src.module.chat_response.intent_handler.docs_qa_intent.docs_retrieval import call_search_vector_hybrid
@@ -96,7 +96,8 @@ async def call_completion_qa(
         language=language,
         now=get_current_datetime(),
         feedback_guide=PROMPT_GUIDE_FEEDBACK if feedbacks else "",
-        feedbacks=feedbacks_str
+        feedbacks=feedbacks_str,
+        intents=f"### Intent\n{QADocsCFG.INTENTS}"
     )
 
     if len(context) == 0:
@@ -111,7 +112,8 @@ async def call_completion_qa(
             language=language,
             histories=histories_str,
             feedback_guide=PROMPT_GUIDE_FEEDBACK if feedbacks else "",
-            feedbacks=feedbacks_str
+            feedbacks=feedbacks_str,
+            intents=QADocsCFG.INTENTS
         )
         logger.info("DOCS QA PROMPT: %s", formatted_prompt)
         docs_response = await call_model_gemini(formatted_prompt)
@@ -126,6 +128,7 @@ async def call_completion_qa(
         if qa_response in [BotDefaultMSG.NOT_RELATED_DOCUMENT, BotDefaultMSG.CANNOT_FIND_ANSWER]:
             logger.info("GENERIC PROMPT: %s", generic_prompt)
             docs_response = await call_model_gemini(generic_prompt)
+            # docs_response["qna_intent"] = "general_agriculture"
 
     return docs_response
 

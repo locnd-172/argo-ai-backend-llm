@@ -102,6 +102,12 @@ class TextSplitterCFG:
     SEPARATORS = ["\r\n", "\n", ".\n", ". ", " ", ""]
 
 
+class QADocsCFG:
+    INTENTS = ["plant_variety", "fertilization", "irrigation", "soil", "pest", "disease", "crop_preservation",
+               "cultivation_techniques", "hydroponics", "agricultural_standards", "farm_management",
+               "precision_agriculture", "ghg_emission", "greenhouse_cultivation", "renewable_energy", "general_agriculture"]
+
+
 PROMPT_GUIDE_FEEDBACK = """There may be some feedbacks. A feedback contains question, answer and feedback_content. 
 You should follow answers with high score feedback_content like 4/5 or 5/5, and avoid bad feedback_content ones like 0/5 or 1/5. 
 You should put the feedbacks on a higher priority than given documents."""
