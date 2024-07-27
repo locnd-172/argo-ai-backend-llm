@@ -75,3 +75,4 @@ async def get_chat_statistic_api() -> Dict[str, Any]:
     except Exception as err:
         logger.error("[X] Exception in generate answer: %s, %s", err, traceback.format_exc())
         return {"response": "An error occurred while processing your request."}
+
