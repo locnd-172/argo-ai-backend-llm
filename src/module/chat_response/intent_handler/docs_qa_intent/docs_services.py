@@ -174,4 +174,7 @@ def format_feedbacks(feedbacks):
 
 def filter_feedback(feedbacks):
     feedbacks = [item for item in feedbacks if item.get("score") >= RetrievalCFG.SEARCH_THRESHOLD_RELEVANT_FEEDBACK]
+    top_feedback = RetrievalCFG.TOP_FEEDBACK
+    if len(feedbacks) > top_feedback:
+        feedbacks = feedbacks[:top_feedback]
     return feedbacks
