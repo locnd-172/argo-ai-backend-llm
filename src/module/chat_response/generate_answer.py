@@ -50,8 +50,9 @@ async def generate_chat_response(data, file, histories):
     chat_response["intent"] = intent
     chat_response["message_id"] = data.message_id
     chat_response["qna_intent"] = chat_response.get("qna_intent", None)
-    if chat_response["qna_intent"] in "DEF_VALUE":
+    if intent != IntentCFG.QNA:
         chat_response["qna_intent"] = None
+
     logger.info("CHAT RESPONSE: %s", json.dumps(chat_response, indent=4, ensure_ascii=False))
     return chat_response
 
