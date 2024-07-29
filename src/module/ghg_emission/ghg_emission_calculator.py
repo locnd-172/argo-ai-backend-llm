@@ -35,6 +35,13 @@ class GHGEmissionCalculator:
         energy_emission = self.calculate_energy_emission()
 
         total_emission = irrigation_emission + land_management_emission + crop_protection_emission + energy_emission
+
+        irrigation_emission = round(irrigation_emission, 2)
+        land_management_emission = round(land_management_emission, 2)
+        crop_protection_emission = round(crop_protection_emission, 2)
+        energy_emission = round(energy_emission, 2)
+        total_emission = round(total_emission, 2)
+
         return total_emission, irrigation_emission, land_management_emission, crop_protection_emission, energy_emission
 
     def calculate_irrigation_emission(self):
